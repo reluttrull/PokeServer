@@ -3,6 +3,6 @@
     public class Weakness
     {
         public string Type { get; set; } = string.Empty;
-        public double Value { get; set; }
+        public string Value { get; set; } = string.Empty;
     }
 }

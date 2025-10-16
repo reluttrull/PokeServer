@@ -4,29 +4,29 @@
     {
         public enum CardCategory
         {
-            POKEMON,
-            ENERGY,
-            TRAINER
+            Pokemon,
+            Energy,
+            Trainer
         }
         public enum EnergyType
         {
-            BASIC,
-            SPECIAL
+            Basic,
+            Special
         }
 
         public enum EnergyColor
         {
-            COLORLESS,
-            DARKNESS,
-            DRAGON,
-            FAIRY,
-            FIGHTING,
-            FIRE,
-            GRASS,
-            LIGHTNING,
-            METAL,
-            PSYCHIC,
-            WATER
+            Colorless,
+            Darkness,
+            Dragon,
+            Fairy,
+            Fighting,
+            Fire,
+            Grass,
+            Lightning,
+            Metal,
+            Psychic,
+            Water
         }
     }
 }
