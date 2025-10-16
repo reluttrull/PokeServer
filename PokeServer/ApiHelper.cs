@@ -31,9 +31,19 @@ namespace PokeServer
                             }
                             break;
                         case Enums.CardCategory.Trainer:
-                            // TODO: create TrainerCard class
+                            TrainerCard tCard = System.Text.Json.JsonSerializer.Deserialize<TrainerCard>(jsonResponse, options);
+                            if (tCard != null)
+                            {
+                                cards.Add(tCard);
+                            }
+                            break;
                         case Enums.CardCategory.Energy:
-                            // TODO: create EnergyCard class
+                            EnergyCard eCard = System.Text.Json.JsonSerializer.Deserialize<EnergyCard>(jsonResponse, options);
+                            if (eCard != null)
+                            {
+                                cards.Add(eCard);
+                            }
+                            break;
                         default:
                             Card oCard = System.Text.Json.JsonSerializer.Deserialize<Card>(jsonResponse, options);
                             if (oCard != null)
