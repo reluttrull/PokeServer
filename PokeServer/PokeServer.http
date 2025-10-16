@@ -1,0 +1,11 @@
+@PokeServer_HostAddress = http://localhost:32772
+
+GET {{PokeServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+@DeckId=0
+GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
+
+###

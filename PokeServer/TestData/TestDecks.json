@@ -1,0 +1,31 @@
+[
+  {
+    "DeckId": 0,
+    "Name": "Haymaker",
+    "Description": "A deck focused on powerful, straightforward attacks.",
+    "CardIds": [
+      "base1-20",
+      "base1-20",
+      "base1-20",
+      "base1-20",
+      "base1-7",
+      "base1-7",
+      "base1-7",
+      "base1-7",
+      "base1-97",
+      "base1-97",
+      "base1-97",
+      "base1-97",
+      "base1-97",
+      "base1-97",
+      "base1-97",
+      "base1-100",
+      "base1-100",
+      "base1-100",
+      "base1-100",
+      "base1-100",
+      "base1-100"
+    ]
+
+  }
+]
