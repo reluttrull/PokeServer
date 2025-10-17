@@ -4,27 +4,26 @@
     "Name": "Haymaker",
     "Description": "A deck focused on powerful, straightforward attacks.",
     "CardIds": [
-      "base1-20",
-      "base1-20",
-      "base1-20",
-      "base1-20",
-      "base1-7",
-      "base1-7",
-      "base1-7",
-      "base1-7",
-      "base1-97",
-      "base1-97",
-      "base1-97",
-      "base1-97",
-      "base1-97",
-      "base1-97",
-      "base1-97",
-      "base1-100",
-      "base1-100",
-      "base1-100",
-      "base1-100",
-      "base1-100",
-      "base1-100"
+      "base1-7", "base1-7", "base1-7", "base1-7",
+      "base1-20", "base1-20", "base1-20",
+      "base1-27", "base1-27",
+      "base1-48", "base1-48",
+      "base1-3",
+
+      "base1-91", "base1-91", "base1-91", "base1-91",
+      "base1-88", "base1-88", "base1-88", "base1-88",
+      "base1-92", "base1-92", "base1-92", "base1-92",
+      "base1-93", "base1-93", "base1-93",
+      "base1-78", "base1-78", "base1-78",
+      "base1-81", "base1-81", "base1-81",
+      "base1-74", "base1-74", "base1-74",
+      "base1-79", "base1-79",
+      "base1-84", "base1-84",
+      "base1-75", "base1-75",
+
+      "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97",
+      "base1-100", "base1-100", "base1-100", "base1-100", "base1-100", "base1-100", "base1-100",
+      "base1-96", "base1-96"
     ]
 
   }
