@@ -40,7 +40,7 @@ namespace PokeServer.Controllers
                 throw new Exception("Failed to draw a valid starting hand.");
             }
 
-            game.Hand = gameStart.Hand;
+            game.SetStartingHand(gameStart.Hand);
 
             // TODO: switch to Redis?
             if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))

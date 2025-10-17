@@ -29,5 +29,23 @@ namespace PokeServer.Model
                 }
             }
         }
+
+        internal void SetStartingHand(List<Card> hand)
+        {
+            Hand = hand;
+            // remove hand from deck
+            Deck.Cards.RemoveAll(c => Hand.Contains(c));
+            //System.Diagnostics.Debug.WriteLine($"");
+            Console.WriteLine($"Starting hand set with {Hand.Count} cards.");
+            Console.WriteLine($"Deck has {Deck.Cards.Count} cards remaining.");
+            // Set aside 6 prize cards
+            var random = new Random();
+            List<Card> PrizeCards = Deck.Cards.OrderBy(c => random.Next()).Take(6).ToList();
+            // remove prize cards from deck
+            Deck.Cards.RemoveAll(c => PrizeCards.Contains(c));
+            Console.WriteLine($"Starting prize cards set with {PrizeCards.Count} cards.");
+            Console.WriteLine($"Deck has {Deck.Cards.Count} cards remaining.");
+
+        }
     }
 }
