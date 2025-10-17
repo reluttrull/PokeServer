@@ -19,7 +19,7 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("getnewgame/{deckId}")]
-        public async Task<string> GetNewGame(int DeckId)
+        public async Task<GameStart> GetNewGame(int DeckId)
         {
             Game game = new Game(DeckId);
             _logger.LogInformation("New game created with DeckId: {DeckId}", DeckId);
@@ -30,6 +30,18 @@ namespace PokeServer.Controllers
                 game.Deck.Cards = await ApiHelper.PopulateCardList(game.Deck.CardIds);
                 _logger.LogInformation("Populated {CardCount} cards for deck {DeckId}", game.Deck.Cards.Count, DeckId);
             }
+
+            _logger.LogInformation("Shuffling deck and drawing hand for game {GameGuid}", game.Guid);
+            GameStart gameStart = new GameStart(game.Guid.ToString(), game.Deck.Cards);
+
+            if (gameStart.Hand.Count == 0)
+            {
+                _logger.LogError("Failed to draw a valid starting hand for game {GameGuid}", game.Guid);
+                throw new Exception("Failed to draw a valid starting hand.");
+            }
+
+            game.Hand = gameStart.Hand;
+
             // TODO: switch to Redis?
             if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))
             {
@@ -37,7 +49,7 @@ namespace PokeServer.Controllers
                     .SetSlidingExpiration(TimeSpan.FromHours(3));
                 _memoryCache.Set<Game>(game.Guid.ToString(), game, cacheEntryOptions);
             }
-            return game.Guid.ToString(); // TODO: return game start data along with Guid
+            return gameStart; // TODO: return game start data along with Guid
         }
 
         [HttpGet]
