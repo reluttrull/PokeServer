@@ -1,4 +1,4 @@
-@PokeServer_HostAddress = http://localhost:32770
+@PokeServer_HostAddress = http://localhost:5190
 
 
 @DeckId=0
