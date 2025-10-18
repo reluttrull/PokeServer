@@ -69,23 +69,5 @@ namespace PokeServer
             }
             return cards;
         }
-        public static async Task<PokemonCard> PopulatePokemonCardInfo(Card card)
-        {
-            HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{card.Id}");
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                var options = new System.Text.Json.JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                };
-                var detailedCard = System.Text.Json.JsonSerializer.Deserialize<PokemonCard>(jsonResponse, options);
-                if (detailedCard != null)
-                {
-                    return detailedCard;
-                }
-            }
-            return (PokemonCard)card;
-        }
     }
 }

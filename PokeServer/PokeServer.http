@@ -7,6 +7,11 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 ###
 # @Guid="9b9eafcf-118d-4477-8358-5d3fc3d0f875"
-GET {{PokeServer_HostAddress}}/game/checkgameactive/65f30fac-955a-4bda-8ede-8b4ecf92b072
+GET {{PokeServer_HostAddress}}/game/checkgameactive/fd56f26a-3cdd-4e11-a3bd-0f47953d8ef8
+
+###
+
+@Guid=fd56f26a-3cdd-4e11-a3bd-0f47953d8ef8
+GET {{PokeServer_HostAddress}}/game/drawcardfromdeck/{{guid}}
 
 ###

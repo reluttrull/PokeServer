@@ -59,5 +59,20 @@ namespace PokeServer.Controllers
             if (_memoryCache.TryGetValue(guid, out Game? value)) return true;
             return false;
         }
+
+        [HttpGet]
+        [Route("drawcardfromdeck/{guid}")]
+        public async Task<Card> DrawCardFromDeck(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new Exception("Game not found.");
+            if (game.Deck.Cards.Count < 1) throw new Exception("No cards left in deck.");
+
+            Card drawnCard = game.Deck.Cards[0];
+            game.Hand.Add(drawnCard);
+            game.Deck.Cards.RemoveAt(0);
+            _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
+            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
+            return drawnCard;
+        }
     }
 }
