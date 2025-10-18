@@ -35,14 +35,15 @@ namespace PokeServer.Model
             Hand = hand;
             // remove hand from deck
             Deck.Cards.RemoveAll(c => Hand.Contains(c));
-            //System.Diagnostics.Debug.WriteLine($"");
+            // shuffle deck and leave the order alone
+            Random random = new Random();
+            Deck.Cards = Deck.Cards.OrderBy(Random => random.Next()).ToList();
             Console.WriteLine($"Starting hand set with {Hand.Count} cards.");
             Console.WriteLine($"Deck has {Deck.Cards.Count} cards remaining.");
             // Set aside 6 prize cards
-            var random = new Random();
-            List<Card> PrizeCards = Deck.Cards.OrderBy(c => random.Next()).Take(6).ToList();
+            List<Card> PrizeCards = Deck.Cards.Take(6).ToList();
             // remove prize cards from deck
-            Deck.Cards.RemoveAll(c => PrizeCards.Contains(c));
+            Deck.Cards.RemoveRange(0, 6);
             Console.WriteLine($"Starting prize cards set with {PrizeCards.Count} cards.");
             Console.WriteLine($"Deck has {Deck.Cards.Count} cards remaining.");
 
