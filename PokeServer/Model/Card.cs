@@ -2,6 +2,10 @@
 
 namespace PokeServer.Model
 {
+    [JsonDerivedType(typeof(Card), "Card")]
+    [JsonDerivedType(typeof(PokemonCard), "PokemonCard")]
+    [JsonDerivedType(typeof(EnergyCard), "EnergyCard")]
+    [JsonDerivedType(typeof(TrainerCard), "TrainerCard")]
     public class Card
     {
         public Guid NumberInDeck { get; set; } = Guid.NewGuid();
