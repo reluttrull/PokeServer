@@ -74,5 +74,30 @@ namespace PokeServer.Controllers
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             return drawnCard;
         }
+
+        [HttpPut]
+        [Route("discardcard/{guid}")]
+        public async Task<IActionResult> DiscardCard(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
+            {
+                game.ActivePokemon = null;
+            }
+            else return NotFound("Card not in play.");
+
+            game.DiscardPile.Add(card);
+
+            return NoContent();
+        }
     }
 }
