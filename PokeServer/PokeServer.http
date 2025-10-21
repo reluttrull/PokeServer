@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=204c8ad7-1349-4429-9c80-f7cbaace5c78
+@Guid=2cd976a2-b229-4bcd-973e-73c7aad86d5f
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -20,38 +20,12 @@ PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
 Content-Type: application/json
 
 {
-      "$type": "PokemonCard",
-      "hp": 50,
-      "types": [
-        "Colorless"
-      ],
-      "evolveFrom": "",
-      "stage": "Basic",
-      "abilities": [],
-      "attacks": [
-        {
-          "cost": [
-            "Colorless"
-          ],
-          "name": "Fury Attack",
-          "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
-          "damage": "10x"
-        }
-      ],
-      "weaknesses": [
-        {
-          "type": "Lightning",
-          "value": "×2"
-        }
-      ],
-      "retreatCost": 0,
-      "numberInDeck": "10aa6da3-aded-4bac-bb0a-047fe6f48849",
-      "category": "Pokemon",
-      "id": "base1-48",
-      "image": "https://assets.tcgdex.net/en/base/base1/48",
-      "name": "Doduo",
-      "description": ""
-    }
+  // Card
+}
 
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/endgame/{{guid}}
 
 ###

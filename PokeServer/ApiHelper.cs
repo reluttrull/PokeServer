@@ -22,7 +22,6 @@ namespace PokeServer
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"calling API for {cardIds[i]}");
                     HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{cardIds[i]}");
                     if (!response.IsSuccessStatusCode) throw new Exception("failed to retrieve card data from TCGDex API");
                     cardJson = await response.Content.ReadAsStringAsync();

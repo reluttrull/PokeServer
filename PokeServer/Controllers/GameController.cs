@@ -41,6 +41,10 @@ namespace PokeServer.Controllers
             }
 
             game.SetStartingHand(gameStart.Hand);
+            _logger.LogInformation($"Starting hand set with {game.Hand.Count} cards.");
+            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
+            _logger.LogInformation($"Starting prize cards set with {game.PrizeCards.Count} cards.");
+            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
 
             // TODO: switch to Redis?
             if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))
@@ -98,6 +102,19 @@ namespace PokeServer.Controllers
             game.DiscardPile.Add(card);
 
             return NoContent();
+        }
+
+        [HttpPut]
+        [Route("endgame/{guid}")]
+        public async Task<IActionResult> EndGame(string guid)
+        {
+            if (_memoryCache.TryGetValue(guid, out Game? game) && game != null)
+            {
+                _memoryCache.Remove(guid);
+                _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
+                return NoContent();
+            }
+            return NotFound("Game not found.");
         }
     }
 }
