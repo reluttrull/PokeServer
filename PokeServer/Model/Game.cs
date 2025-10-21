@@ -39,7 +39,7 @@ namespace PokeServer.Model
             Random random = new Random();
             Deck.Cards = Deck.Cards.OrderBy(Random => random.Next()).ToList();
             // Set aside 6 prize cards
-            List<Card> PrizeCards = Deck.Cards.Take(6).ToList();
+            PrizeCards = Deck.Cards.Take(6).ToList();
             // remove prize cards from deck
             Deck.Cards.RemoveRange(0, 6);
 

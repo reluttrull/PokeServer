@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=2cd976a2-b229-4bcd-973e-73c7aad86d5f
+@Guid=8d97c403-b21b-43d3-b46b-059ca55c8996
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -41,5 +41,9 @@ GET {{PokeServer_HostAddress}}/game/flipxcoins/{{x}}
 
 @isHeads=False
 GET {{PokeServer_HostAddress}}/game/flipcoinsuntil/{{isHeads}}
+
+###
+
+GET {{PokeServer_HostAddress}}/game/drawcardfromprizes/{{guid}}
 
 ###

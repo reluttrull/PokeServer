@@ -80,6 +80,25 @@ namespace PokeServer.Controllers
             return drawnCard;
         }
 
+        [HttpGet]
+        [Route("drawcardfromprizes/{guid}")]
+        public async Task<PrizeCardWrapper> DrawCardFromPrizes(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new Exception("Game not found.");
+            if (game.PrizeCards.Count < 1) throw new Exception("No prize cards left.");
+            Card drawnCard = game.PrizeCards[0];
+            game.Hand.Add(drawnCard);
+            game.PrizeCards.RemoveAt(0);
+            _logger.LogInformation($"1 prize card drawn, hand has {game.Hand.Count} cards.");
+            _logger.LogInformation($"{game.PrizeCards.Count} cards remaining.");
+            PrizeCardWrapper prizeCardWrapper = new PrizeCardWrapper
+            {
+                PrizeCard = drawnCard,
+                RemainingPrizes = game.PrizeCards.Count
+            };
+            return prizeCardWrapper;
+        }
+
         [HttpPut]
         [Route("discardcard/{guid}")]
         public async Task<IActionResult> DiscardCard(string guid, Card card)
