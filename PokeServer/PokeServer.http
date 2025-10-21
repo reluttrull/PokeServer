@@ -29,3 +29,17 @@ Content-Type: application/json
 PUT {{PokeServer_HostAddress}}/game/endgame/{{guid}}
 
 ###
+
+GET {{PokeServer_HostAddress}}/game/flipcoin
+
+###
+
+@x=5
+GET {{PokeServer_HostAddress}}/game/flipxcoins/{{x}}
+
+###
+
+@isHeads=False
+GET {{PokeServer_HostAddress}}/game/flipcoinsuntil/{{isHeads}}
+
+###

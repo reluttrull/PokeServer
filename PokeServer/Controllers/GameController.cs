@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PokeServer.Model;
+using System.ComponentModel;
 
 namespace PokeServer.Controllers
 {
@@ -115,6 +116,54 @@ namespace PokeServer.Controllers
                 return NoContent();
             }
             return NotFound("Game not found.");
+        }
+
+        private bool GetFlip(Random rand)
+        {
+            return rand.Next(2) == 0;
+        }
+
+        [HttpGet]
+        [Route("flipcoin")]
+        public async Task<bool> FlipCoin()
+        {
+            Random rand = new Random();
+            bool isHeads = GetFlip(rand);
+            _logger.LogInformation("Coin flipped: {Result}", isHeads ? "Heads" : "Tails");
+            return isHeads;
+        }
+
+        [HttpGet]
+        [Route("flipxcoins/{x}")]
+        public async Task<List<bool>> FlipXCoins(int x)
+        {
+            if (x < 1) throw new Exception("Number of coins to flip must be at least 1.");
+            Random rand = new Random();
+            List<bool> Coins = new List<bool>();
+            for (int i = 0; i < x; i++)
+            {
+                bool isHeads = GetFlip(rand);
+                Coins.Add(isHeads);
+            }
+            _logger.LogInformation("{HeadsCount} heads flipped out of {TotalFlips} flips.", Coins.Count(c => c), x);
+            return Coins;
+        }
+
+        [HttpGet]
+        [Route("flipcoinsuntil/{isHeads}")]
+        public async Task<int> FlipCoinsUntil(bool isHeads)
+        {
+            // if first flip matches, returns 0
+            Random rand = new Random();
+            int flips = -1;
+            bool result = !isHeads;
+            while (result != isHeads)
+            {
+                flips++;
+                result = GetFlip(rand);
+            }
+            _logger.LogInformation("Flipped {FlipCount} times until {DesiredResult}.", flips, isHeads ? "Heads" : "Tails");
+            return flips;
         }
     }
 }
