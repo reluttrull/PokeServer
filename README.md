@@ -9,4 +9,4 @@ Rough outline below:
 
 <img width="3144" height="2034" alt="PokeTCG play and end game-2025-10-21-202657" src="https://github.com/user-attachments/assets/d5022885-6a24-4f19-8e5a-52283f772b73" />
 
-<small>This application is not produced, endorsed, supported, or affiliated with Nintendo or The Pokémon Company, and is intended solely for educational purposes.</small>
+<sub>This application is not produced, endorsed, supported, or affiliated with Nintendo or The Pokémon Company, and is intended solely for educational purposes.</sub>
