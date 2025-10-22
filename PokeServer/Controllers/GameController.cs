@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PokeServer.Model;
-using System.ComponentModel;
 
 namespace PokeServer.Controllers
 {
@@ -22,9 +21,11 @@ namespace PokeServer.Controllers
         [Route("getnewgame/{deckId}")]
         public async Task<GameStart> GetNewGame(int DeckId)
         {
+            // create Game object
             Game game = new Game(DeckId);
             _logger.LogInformation("New game created with DeckId: {DeckId}", DeckId);
-            // TODO: retrieve each card from cache if stored (reduce API calls)
+
+            // populate deck from deck matching specified DeckId
             if (game.Deck.Cards.Count == 0)
             {
                 _logger.LogInformation("Populating card list for deck {DeckId}", DeckId);
@@ -32,7 +33,8 @@ namespace PokeServer.Controllers
                 _logger.LogInformation("Populated {CardCount} cards for deck {DeckId}", game.Deck.Cards.Count, DeckId);
             }
 
-            _logger.LogInformation("Shuffling deck and drawing hand for game {GameGuid}", game.Guid);
+            _logger.LogInformation("Shuffling deck and drawing hand for game {GameGuid}...", game.Guid);
+            // create GameStart object (draw starting hand)
             GameStart gameStart = new GameStart(game.Guid.ToString(), game.Deck.Cards);
 
             if (gameStart.Hand.Count == 0)
@@ -41,20 +43,20 @@ namespace PokeServer.Controllers
                 throw new Exception("Failed to draw a valid starting hand.");
             }
 
-            game.SetStartingHand(gameStart.Hand);
+            // populate game object with starting hand and draw prize cards
+            game.SetStartingPosition(gameStart.Hand);
             _logger.LogInformation($"Starting hand set with {game.Hand.Count} cards.");
-            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             _logger.LogInformation($"Starting prize cards set with {game.PrizeCards.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
 
-            // TODO: switch to Redis?
+            // save game to memory cache
             if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))
             {
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromHours(3));
                 _memoryCache.Set<Game>(game.Guid.ToString(), game, cacheEntryOptions);
             }
-            return gameStart; // TODO: return game start data along with Guid
+            return gameStart;
         }
 
         [HttpGet]
@@ -69,8 +71,8 @@ namespace PokeServer.Controllers
         [Route("drawcardfromdeck/{guid}")]
         public async Task<Card> DrawCardFromDeck(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new Exception("Game not found.");
-            if (game.Deck.Cards.Count < 1) throw new Exception("No cards left in deck.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (game.Deck.Cards.Count < 1) throw new IndexOutOfRangeException("No cards left in deck.");
 
             Card drawnCard = game.Deck.Cards[0];
             game.Hand.Add(drawnCard);
@@ -84,8 +86,8 @@ namespace PokeServer.Controllers
         [Route("drawcardfromprizes/{guid}")]
         public async Task<PrizeCardWrapper> DrawCardFromPrizes(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new Exception("Game not found.");
-            if (game.PrizeCards.Count < 1) throw new Exception("No prize cards left.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (game.PrizeCards.Count < 1) throw new IndexOutOfRangeException("No prize cards left.");
             Card drawnCard = game.PrizeCards[0];
             game.Hand.Add(drawnCard);
             game.PrizeCards.RemoveAt(0);
@@ -105,6 +107,7 @@ namespace PokeServer.Controllers
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
+            // currently, we have to figure out where this card is being discarded from
             if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
             {
                 game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
@@ -156,7 +159,8 @@ namespace PokeServer.Controllers
         [Route("flipxcoins/{x}")]
         public async Task<List<bool>> FlipXCoins(int x)
         {
-            if (x < 1) throw new Exception("Number of coins to flip must be at least 1.");
+            if (x < 1) throw new ArgumentOutOfRangeException("Number of coins to flip must be at least 1.");
+            if (x > 20) throw new ArgumentOutOfRangeException("Number of coins to flip must not exceed 20.");
             Random rand = new Random();
             List<bool> Coins = new List<bool>();
             for (int i = 0; i < x; i++)
