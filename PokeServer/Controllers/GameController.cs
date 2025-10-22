@@ -156,7 +156,8 @@ namespace PokeServer.Controllers
         [Route("flipxcoins/{x}")]
         public async Task<List<bool>> FlipXCoins(int x)
         {
-            if (x < 1) throw new Exception("Number of coins to flip must be at least 1.");
+            if (x < 1) throw new ArgumentOutOfRangeException("Number of coins to flip must be at least 1.");
+            if (x > 20) throw new ArgumentOutOfRangeException("Number of coins to flip must not exceed 20.");
             Random rand = new Random();
             List<bool> Coins = new List<bool>();
             for (int i = 0; i < x; i++)
