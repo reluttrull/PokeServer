@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=8d97c403-b21b-43d3-b46b-059ca55c8996
+@Guid=667d2c30-2163-4207-b361-cbcd8e4b2448
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -20,7 +20,16 @@ PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
 Content-Type: application/json
 
 {
-  // Card
+  "$type": "EnergyCard",
+  "effect": "",
+  "energyType": "Normal",
+  "energyColor": "",
+  "numberInDeck": "746fc404-b926-4e89-a361-3aa0b23fcf74",
+  "category": "Energy",
+  "id": "base1-97",
+  "image": "https://assets.tcgdex.net/en/base/base1/97",
+  "name": "Fighting Energy",
+  "description": ""
 }
 
 
@@ -34,7 +43,7 @@ GET {{PokeServer_HostAddress}}/game/flipcoin
 
 ###
 
-@x=5
+@x=15
 GET {{PokeServer_HostAddress}}/game/flipxcoins/{{x}}
 
 ###

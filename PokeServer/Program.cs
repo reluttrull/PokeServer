@@ -1,19 +1,15 @@
 using DotNetEnv;
 
-Env.Load();
+Env.Load(); // load environment variables from .env file
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddMemoryCache();
+builder.Services.AddMemoryCache(); // inject in-memory caching service
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.MapOpenApi();
 
 app.UseHttpsRedirection();

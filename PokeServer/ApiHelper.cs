@@ -16,17 +16,19 @@ namespace PokeServer
             for (int i = 0; i < cardIds.Count; i++)
             {
                 string cardJson = "";
-                if (db.KeyExists(cardIds[i])) // don't need to call api
+
+                if (db.KeyExists(cardIds[i])) // if don't need to call api
                 {
                     cardJson = db.StringGet(cardIds[i]);
                 }
-                else
+                else // if we do need to call api
                 {
                     HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{cardIds[i]}");
-                    if (!response.IsSuccessStatusCode) throw new Exception("failed to retrieve card data from TCGDex API");
+                    if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve card data from TCGDex API");
                     cardJson = await response.Content.ReadAsStringAsync();
                     db.StringSet(cardIds[i], cardJson);
                 }
+                // deserialize what we got
                 var options = new System.Text.Json.JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PokeServer.Model;
-using System.ComponentModel;
 
 namespace PokeServer.Controllers
 {
@@ -88,7 +87,7 @@ namespace PokeServer.Controllers
         public async Task<PrizeCardWrapper> DrawCardFromPrizes(string guid)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.PrizeCards.Count < 1) throw new Exception("No prize cards left.");
+            if (game.PrizeCards.Count < 1) throw new IndexOutOfRangeException("No prize cards left.");
             Card drawnCard = game.PrizeCards[0];
             game.Hand.Add(drawnCard);
             game.PrizeCards.RemoveAt(0);
