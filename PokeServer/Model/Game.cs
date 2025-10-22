@@ -30,7 +30,7 @@ namespace PokeServer.Model
             }
         }
 
-        internal void SetStartingHand(List<Card> hand)
+        internal void SetStartingPosition(List<Card> hand)
         {
             Hand = hand;
             // remove hand from deck
