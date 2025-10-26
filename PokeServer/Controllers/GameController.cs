@@ -17,6 +17,8 @@ namespace PokeServer.Controllers
             _memoryCache = memoryCache;
         }
 
+        #region game management
+
         [HttpGet]
         [Route("getnewgame/{deckId}")]
         public async Task<GameStart> GetNewGame(int DeckId)
@@ -67,6 +69,23 @@ namespace PokeServer.Controllers
             return false;
         }
 
+        [HttpPut]
+        [Route("endgame/{guid}")]
+        public async Task<IActionResult> EndGame(string guid)
+        {
+            if (_memoryCache.TryGetValue(guid, out Game? game) && game != null)
+            {
+                _memoryCache.Remove(guid);
+                _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
+                return NoContent();
+            }
+            return NotFound("Game not found.");
+        }
+
+        #endregion game management
+
+        #region draw methods
+
         [HttpGet]
         [Route("drawcardfromdeck/{guid}")]
         public async Task<Card> DrawCardFromDeck(string guid)
@@ -101,6 +120,10 @@ namespace PokeServer.Controllers
             return prizeCardWrapper;
         }
 
+        #endregion draw methods
+
+        #region discard methods
+
         [HttpPut]
         [Route("discardcard/{guid}")]
         public async Task<IActionResult> DiscardCard(string guid, Card card)
@@ -124,21 +147,56 @@ namespace PokeServer.Controllers
 
             game.DiscardPile.Add(card);
 
+            _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
+
+            return NoContent();
+        }
+
+        #endregion discard methods
+
+        #region deck management methods
+        [HttpPut]
+        [Route("placecardonbottomofdeck/{guid}")]
+        public async Task<IActionResult> PlaceCardOnBottomOfDeck(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            // currently, we have to figure out where this card is being discarded from
+            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
+            {
+                game.ActivePokemon = null;
+            }
+            else return NotFound("Card not in play.");
+
+            game.Deck.Cards.Add(card);
+
+            _logger.LogInformation("Card {card.Name} placed on bottom of deck for game {guid}.", card.Name, guid);
+
             return NoContent();
         }
 
         [HttpPut]
-        [Route("endgame/{guid}")]
-        public async Task<IActionResult> EndGame(string guid)
+        [Route("shuffledeck/{guid}")]
+        public async Task<IActionResult> ShuffleDeck(string guid)
         {
-            if (_memoryCache.TryGetValue(guid, out Game? game) && game != null)
-            {
-                _memoryCache.Remove(guid);
-                _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
-                return NoContent();
-            }
-            return NotFound("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            Random random = new Random();
+            game.Deck.Cards = game.Deck.Cards.OrderBy(Random => random.Next()).ToList();
+            _logger.LogInformation("Deck shuffled for game {GameGuid}.", guid);
+            return NoContent();
         }
+        #endregion deck management methods
+
+        #region coin flip methods
 
         private bool GetFlip(Random rand)
         {
@@ -188,5 +246,7 @@ namespace PokeServer.Controllers
             _logger.LogInformation("Flipped {FlipCount} times until {DesiredResult}.", flips, isHeads ? "Heads" : "Tails");
             return flips;
         }
+
+        #endregion coin flip methods
     }
 }
