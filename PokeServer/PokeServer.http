@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=9a943dca-f495-4e0b-bc3f-50b35b3de31e
+@Guid=928cbe59-3b46-4df4-9f18-e2c50dc89b93
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -75,5 +75,10 @@ Content-Type: application/json
 ###
 
 PUT {{PokeServer_HostAddress}}/game/shuffledeck/{{guid}}
+
+###
+
+@pos=48
+GET {{PokeServer_HostAddress}}/game/peekatcardindeckatposition/{{guid}}/{{pos}}
 
 ###

@@ -17,7 +17,7 @@ namespace PokeServer
             {
                 string cardJson = "";
 
-                if (db.KeyExists(cardIds[i])) // if don't need to call api
+                if (db.KeyExists(cardIds[i])) // if we already have cached card
                 {
                     cardJson = db.StringGet(cardIds[i]);
                 }
@@ -28,7 +28,7 @@ namespace PokeServer
                     cardJson = await response.Content.ReadAsStringAsync();
                     db.StringSet(cardIds[i], cardJson);
                 }
-                // deserialize what we got
+                // deserialize whatever we got
                 var options = new System.Text.Json.JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,

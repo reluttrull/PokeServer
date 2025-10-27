@@ -8,9 +8,10 @@
         public GameStart(string gameGuid, List<Card> deck)
         {
             GameGuid = gameGuid;
-            // starting hand must have at least one basic Pokemon, otherwise draw again and count as a mulligan
+            // if entire deck has no basic Pokemon, avoid infinite loop
             if (!deck.Any(c => c is PokemonCard && ((PokemonCard)c).Stage == "Basic")) 
                 throw new Exception("No basic Pokemon in deck!");
+            // starting hand must have at least one basic Pokemon, otherwise draw again and count as a mulligan
             while (true)
             {
                 var random = new Random();
