@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=928cbe59-3b46-4df4-9f18-e2c50dc89b93
+@Guid=70ba62c9-df27-43e5-b954-96d99af11b0b
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -78,7 +78,25 @@ PUT {{PokeServer_HostAddress}}/game/shuffledeck/{{guid}}
 
 ###
 
-@pos=48
+@pos=0
 GET {{PokeServer_HostAddress}}/game/peekatcardindeckatposition/{{guid}}/{{pos}}
+
+###
+
+
+PUT {{PokeServer_HostAddress}}/game/drawthiscardfromdeck/{{guid}}
+Content-Type: application/json
+
+{
+  "$type": "TrainerCard",
+  "effect": "",
+  "type": "",
+  "numberInDeck": "2168e80e-a0c0-4553-b159-30d1a9d522f8",
+  "category": "Trainer",
+  "id": "base1-74",
+  "image": "https://assets.tcgdex.net/en/base/base1/74",
+  "name": "Item Finder",
+  "description": ""
+}
 
 ###
