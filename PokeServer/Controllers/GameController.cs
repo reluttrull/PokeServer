@@ -88,7 +88,7 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("drawcardfromdeck/{guid}")]
-        public async Task<Card> DrawCardFromDeck(string guid)
+        public async Task<Card> DrawCardFromDeck(string guid) // top card
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
             if (game.Deck.Cards.Count < 1) throw new IndexOutOfRangeException("No cards left in deck.");
@@ -99,6 +99,22 @@ namespace PokeServer.Controllers
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             return drawnCard;
+        }
+
+        [HttpPut]
+        [Route("drawthiscardfromdeck/{guid}")]
+        public async Task<IActionResult> DrawThisCardFromDeck(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (game.Deck.Cards.Count < 1) throw new IndexOutOfRangeException("No cards left in deck.");
+
+            if (!game.Deck.Cards.Any(c => c.NumberInDeck == card.NumberInDeck)) return NotFound("Card not found in deck.");
+            game.Hand.Add(card);
+            game.Deck.Cards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
+            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
+
+            return NoContent();
         }
 
         [HttpGet]
