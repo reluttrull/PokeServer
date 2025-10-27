@@ -154,6 +154,20 @@ namespace PokeServer.Controllers
 
         #endregion discard methods
 
+        #region peek methods
+        [HttpGet]
+        [Route("peekatcardindeckatposition/{guid}/{pos}")]
+        public async Task<Card> PeekAtCardInDeckAtPosition(string guid, int pos)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (game.Deck.Cards.Count < pos + 1) throw new IndexOutOfRangeException($"Fewer than {pos + 1} cards in deck!");
+
+            Card peek = game.Deck.Cards[pos];
+            _logger.LogInformation("User peeking at card {peek} at position {pos}.", peek.NumberInDeck, pos);
+            return peek;
+        }
+        #endregion peek methods
+
         #region deck management methods
         [HttpPut]
         [Route("placecardonbottomofdeck/{guid}")]
