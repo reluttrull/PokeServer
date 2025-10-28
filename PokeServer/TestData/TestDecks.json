@@ -26,5 +26,32 @@
       "base1-96", "base1-96"
     ]
 
+  },
+  {
+    "DeckId": 1,
+    "Name": "Rain Dance",
+    "Description": "A deck that utilizes water-type Pokémon and rain effects.",
+    "CardIds": [
+      "base1-2", "base1-2", "base1-2",
+      "base1-6", "base1-6", "base1-6",
+      "base1-35", "base1-35", "base1-35", "base1-35",
+      "base1-63", "base1-63", "base1-63", "base1-63",
+      "base1-42",
+      
+      "base1-91", "base1-91", "base1-91", "base1-91",
+      "base1-71", "base1-71", "base1-71",
+      "base1-81", "base1-81", "base1-81",
+      "base1-82", "base1-82",
+      "base1-74", "base1-74", "base1-74",
+      "base1-76", "base1-76", "base1-76",
+      "base1-77", "base1-77",
+      "base1-88", "base1-88", "base1-88", "base1-88",
+      "base1-79", "base1-79",
+      "base1-90", "base1-90",
+      "base1-95", "base1-95",
+
+      "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102",
+      "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102"
+    ]
   }
 ]
