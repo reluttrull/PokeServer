@@ -1,7 +1,7 @@
 @PokeServer_HostAddress = http://localhost:5190
 
 
-@DeckId=0
+@DeckId=1
 GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
