@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=70ba62c9-df27-43e5-b954-96d99af11b0b
+@Guid=d3f58e99-d744-46c5-a1ec-20f668cf5c3d
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -98,5 +98,9 @@ Content-Type: application/json
   "name": "Item Finder",
   "description": ""
 }
+
+###
+
+GET {{PokeServer_HostAddress}}/game/peekatallcardsindeck/{{guid}}
 
 ###

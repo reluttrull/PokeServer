@@ -182,6 +182,16 @@ namespace PokeServer.Controllers
             _logger.LogInformation("User peeking at card {peek} at position {pos}.", peek.NumberInDeck, pos);
             return peek;
         }
+
+        [HttpGet]
+        [Route("peekatallcardsindeck/{guid}")]
+        public async Task<List<Card>> PeekAtAllCardsInDeck(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
+            _logger.LogInformation("User peeking at {num} cards in deck.", game.Deck.Cards.Count);
+            return game.Deck.Cards;
+        }
         #endregion peek methods
 
         #region deck management methods
