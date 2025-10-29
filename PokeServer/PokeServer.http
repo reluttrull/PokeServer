@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=d3f58e99-d744-46c5-a1ec-20f668cf5c3d
+@Guid=dd6fb5bd-3482-428c-80da-629438211ecd
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -20,15 +20,14 @@ PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
 Content-Type: application/json
 
 {
-  "$type": "EnergyCard",
+  "$type": "TrainerCard",
   "effect": "",
-  "energyType": "Normal",
-  "energyColor": "",
-  "numberInDeck": "746fc404-b926-4e89-a361-3aa0b23fcf74",
-  "category": "Energy",
-  "id": "base1-97",
-  "image": "https://assets.tcgdex.net/en/base/base1/97",
-  "name": "Fighting Energy",
+  "type": "",
+  "numberInDeck": "f4935922-9c7a-4249-9464-fb91ace0c351",
+  "category": "Trainer",
+  "id": "base1-91",
+  "image": "https://assets.tcgdex.net/en/base/base1/91",
+  "name": "Bill",
   "description": ""
 }
 
@@ -88,19 +87,37 @@ PUT {{PokeServer_HostAddress}}/game/drawthiscardfromdeck/{{guid}}
 Content-Type: application/json
 
 {
-  "$type": "TrainerCard",
+  "$type": "EnergyCard",
   "effect": "",
-  "type": "",
-  "numberInDeck": "2168e80e-a0c0-4553-b159-30d1a9d522f8",
-  "category": "Trainer",
-  "id": "base1-74",
-  "image": "https://assets.tcgdex.net/en/base/base1/74",
-  "name": "Item Finder",
+  "energyType": "Normal",
+  "energyColor": "",
+  "numberInDeck": "03f90aca-6cf3-4854-97c2-76a74c7ba861",
+  "category": "Energy",
+  "id": "base1-102",
+  "image": "https://assets.tcgdex.net/en/base/base1/102",
+  "name": "Water Energy",
   "description": ""
 }
 
 ###
 
 GET {{PokeServer_HostAddress}}/game/peekatallcardsindeck/{{guid}}
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/drawthiscardfromdiscard/{{guid}}
+Content-Type: application/json
+
+{
+  "$type": "TrainerCard",
+  "effect": "",
+  "type": "",
+  "numberInDeck": "f4935922-9c7a-4249-9464-fb91ace0c351",
+  "category": "Trainer",
+  "id": "base1-91",
+  "image": "https://assets.tcgdex.net/en/base/base1/91",
+  "name": "Bill",
+  "description": ""
+}
 
 ###
