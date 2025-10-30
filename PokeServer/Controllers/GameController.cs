@@ -304,5 +304,14 @@ namespace PokeServer.Controllers
         }
 
         #endregion coin flip methods
+
+        #region other methods
+        [HttpGet]
+        [Route("getvalidevolutions/{pokemonName}")]
+        public async Task<List<string>> GetValidEvolutions(string pokemonName)
+        {
+            return await ApiHelper.GetValidEvolutionNames(pokemonName);
+        }
+        #endregion other methods
     }
 }

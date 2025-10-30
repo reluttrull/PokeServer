@@ -70,5 +70,29 @@ namespace PokeServer
             }
             return cards;
         }
+
+        public static async Task<List<string>> GetValidEvolutionNames(string pokemonName)
+        {
+            HttpResponseMessage response = await new HttpClient().GetAsync($"http://api.tcgdex.net/v2/en/cards?evolveFrom={pokemonName}");
+            if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve evolution data from TCGDex API");
+            string responseJson = await response.Content.ReadAsStringAsync();
+            var options = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            var root = JsonNode.Parse(responseJson)!;
+            //var dataArray = root["data"]!.AsArray();
+            var dataArray = root.AsArray();
+            HashSet<string> evolutionNames = new HashSet<string>();
+            foreach (var item in dataArray)
+            {
+                PokemonCard pCard = System.Text.Json.JsonSerializer.Deserialize<PokemonCard>(item.ToJsonString(), options);
+                if (pCard != null && !string.IsNullOrEmpty(pCard.Name))
+                {
+                    evolutionNames.Add(pCard.Name);
+                }
+            }
+            return evolutionNames.ToList();
+        }
     }
 }

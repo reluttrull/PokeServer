@@ -121,3 +121,8 @@ Content-Type: application/json
 }
 
 ###
+
+@pokemonName=Eevee
+GET {{PokeServer_HostAddress}}/game/getvalidevolutions/{{pokemonName}}
+
+###
