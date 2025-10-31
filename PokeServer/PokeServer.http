@@ -1,12 +1,12 @@
 @PokeServer_HostAddress = http://localhost:5190
 
 
-@DeckId=1
+@DeckId=2
 GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=dd6fb5bd-3482-428c-80da-629438211ecd
+@Guid=06495df3-d925-446d-b3b6-d9dddf27e5d6
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###

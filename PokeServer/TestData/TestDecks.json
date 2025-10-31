@@ -53,5 +53,35 @@
       "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102",
       "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102", "base1-102"
     ]
+  },
+  {
+    "DeckId": 2,
+    "Name":  "Machamp/Alakazam",
+    "Description":  "A deck centered around Machamp and Alakazam for strong offense and healing.",
+    "CardIds":  [
+      "base1-43", "base1-43", "base1-43", "base1-43",
+      "base1-32", "base1-32",
+      "base1-1", "base1-1", "base1-1",
+      "base1-52", "base1-52", "base1-52",
+      "base1-34", "base1-34",
+      "base1-8", "base1-8",
+      "base1-3", "base1-3", "base1-3", "base1-3",
+      "base1-48",
+
+      "base1-81", "base1-81", "base1-81", "base1-81",
+      "base1-88", "base1-88", "base1-88",
+      "base1-95", "base1-95", "base1-95",
+      "base1-74", "base1-74", "base1-74",
+      "base1-71", "base1-71",
+      "base1-85", "base1-85",
+      "base1-77", "base1-77",
+      "base1-76", "base1-76",
+      "base1-83",
+      "base1-75",
+      
+      "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97",
+      "base1-97", "base1-97", "base1-97", "base1-97", "base1-97", "base1-97",
+      "base1-96", "base1-96", "base1-96", "base1-96"
+    ]
   }
 ]
