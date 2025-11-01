@@ -126,3 +126,7 @@ Content-Type: application/json
 GET {{PokeServer_HostAddress}}/game/getvalidevolutions/{{pokemonName}}
 
 ###
+
+GET {{PokeServer_HostAddress}}/deck/getalldeckbriefs
+
+###
