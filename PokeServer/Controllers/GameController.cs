@@ -61,6 +61,16 @@ namespace PokeServer.Controllers
             return gameStart;
         }
 
+
+        [HttpGet]
+        [Route("gethand/{guid}")]
+        public async Task<List<Card>> GetHand(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
+            return game.Hand;
+        }
+
         [HttpGet]
         [Route("checkgameactive/{guid}")]
         public async Task<bool> CheckGameActive(string guid)
@@ -83,6 +93,48 @@ namespace PokeServer.Controllers
         }
 
         #endregion game management
+
+        #region device management
+        [HttpPut]
+        [Route("sendtoplayarea/{guid}")]
+        public async Task<IActionResult> SendToPlayArea(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            // currently, we have to figure out where this card is being discarded from
+            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else return NotFound("Card not in hand.");
+
+            game.InPlay.Add(card);
+
+            _logger.LogInformation("Card {card.Name} put in play for game {guid}.", card.Name, guid);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("sendtohand/{guid}")]
+        public async Task<IActionResult> SendToHand(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            // currently, we have to figure out where this card is being discarded from
+            if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else return NotFound("Card not in play.");
+
+            game.Hand.Add(card);
+
+            _logger.LogInformation("Card {card.Name} returned to hand for game {guid}.", card.Name, guid);
+
+            return NoContent();
+        }
+        #endregion device management
 
         #region draw methods
 
@@ -167,13 +219,9 @@ namespace PokeServer.Controllers
             {
                 game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
-            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
             {
-                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
-            {
-                game.ActivePokemon = null;
+                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
             else return NotFound("Card not in play.");
 
@@ -222,13 +270,9 @@ namespace PokeServer.Controllers
             {
                 game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
-            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
             {
-                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
-            {
-                game.ActivePokemon = null;
+                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
             else return NotFound("Card not in play.");
 

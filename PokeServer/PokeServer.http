@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=06495df3-d925-446d-b3b6-d9dddf27e5d6
+@Guid=11d8deb8-3745-45c2-a31c-9bb657f20850
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -128,5 +128,43 @@ GET {{PokeServer_HostAddress}}/game/getvalidevolutions/{{pokemonName}}
 ###
 
 GET {{PokeServer_HostAddress}}/deck/getalldeckbriefs
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/sendtohand/{{guid}}
+Content-Type: application/json
+
+{
+    "$type": "TrainerCard",
+    "effect": "",
+    "type": "",
+    "numberInDeck": "c2d768fe-8d30-45a0-896b-b60d44f79333",
+    "category": "Trainer",
+    "id": "base1-74",
+    "image": "https://assets.tcgdex.net/en/base/base1/74",
+    "name": "Item Finder",
+    "description": ""
+  }
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/sendtoplayarea/{{guid}}
+Content-Type: application/json
+
+{
+    "$type": "TrainerCard",
+    "effect": "",
+    "type": "",
+    "numberInDeck": "c2d768fe-8d30-45a0-896b-b60d44f79333",
+    "category": "Trainer",
+    "id": "base1-74",
+    "image": "https://assets.tcgdex.net/en/base/base1/74",
+    "name": "Item Finder",
+    "description": ""
+  }
+
+###
+
+GET {{PokeServer_HostAddress}}/game/gethand/{{guid}}
 
 ###
