@@ -113,7 +113,7 @@ namespace PokeServer.Controllers
 
             game.InPlay.Add(card);
 
-            await _hubContext.Clients.User(guid).SendAsync("CardAddedToPlayArea", card);
+            await _hubContext.Clients.Group(guid).SendAsync("CardAddedToPlayArea", card);
             _logger.LogInformation("Card {card.Name} put in play for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -134,7 +134,7 @@ namespace PokeServer.Controllers
 
             game.Hand.Add(card);
 
-            await _hubContext.Clients.User(guid).SendAsync("CardReturnedToHand", card);
+            await _hubContext.Clients.Group(guid).SendAsync("CardReturnedToHand", card);
             _logger.LogInformation("Card {card.Name} returned to hand for game {guid}.", card.Name, guid);
 
             return NoContent();
