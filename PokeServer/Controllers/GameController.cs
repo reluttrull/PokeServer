@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using PokeServer.Model;
 
@@ -10,11 +11,13 @@ namespace PokeServer.Controllers
     {
         private readonly ILogger<GameController> _logger;
         private readonly IMemoryCache _memoryCache;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public GameController(ILogger<GameController> logger, IMemoryCache memoryCache)
+        public GameController(ILogger<GameController> logger, IMemoryCache memoryCache, IHubContext<NotificationHub> hubContext)
         {
             _logger = logger;
             _memoryCache = memoryCache;
+            _hubContext = hubContext;
         }
 
         #region game management
@@ -110,6 +113,7 @@ namespace PokeServer.Controllers
 
             game.InPlay.Add(card);
 
+            await _hubContext.Clients.User(guid).SendAsync("CardAddedToPlayArea", card);
             _logger.LogInformation("Card {card.Name} put in play for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -130,6 +134,7 @@ namespace PokeServer.Controllers
 
             game.Hand.Add(card);
 
+            await _hubContext.Clients.User(guid).SendAsync("CardReturnedToHand", card);
             _logger.LogInformation("Card {card.Name} returned to hand for game {guid}.", card.Name, guid);
 
             return NoContent();
