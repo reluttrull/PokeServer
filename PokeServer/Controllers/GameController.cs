@@ -167,13 +167,9 @@ namespace PokeServer.Controllers
             {
                 game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
-            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
             {
-                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
-            {
-                game.ActivePokemon = null;
+                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
             else return NotFound("Card not in play.");
 
@@ -222,13 +218,9 @@ namespace PokeServer.Controllers
             {
                 game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
-            else if (game.Bench.Any(c => c.NumberInDeck == card.NumberInDeck))
+            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
             {
-                game.Bench.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.ActivePokemon != null && game.ActivePokemon.NumberInDeck == card.NumberInDeck)
-            {
-                game.ActivePokemon = null;
+                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             }
             else return NotFound("Card not in play.");
 

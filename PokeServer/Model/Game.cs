@@ -9,8 +9,7 @@ namespace PokeServer.Model
         public List<Card> Hand { get; set; } = new List<Card>();
         public List<Card> PrizeCards { get; set; } = new List<Card>();
         public List<Card> DiscardPile { get; set; } = new List<Card>();
-        public List<PokemonCard> Bench { get; set; } = new List<PokemonCard>();
-        public PokemonCard? ActivePokemon { get; set; } = null;
+        public List<Card> InPlay { get; set; } = new List<Card>();
         public Game(int deckId)
         {
             using (StreamReader r = new StreamReader("TestData/TestDecks.json"))
