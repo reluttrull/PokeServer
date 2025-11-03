@@ -134,8 +134,8 @@ namespace PokeServer.Controllers
 
             game.Hand.Add(card);
 
-            await _hubContext.Clients.Group(guid).SendAsync("CardReturnedToHand", card);
-            _logger.LogInformation("Card {card.Name} returned to hand for game {guid}.", card.Name, guid);
+            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
+            _logger.LogInformation("Card {card.Name} moved to hand for game {guid}.", card.Name, guid);
 
             return NoContent();
         }
@@ -153,6 +153,7 @@ namespace PokeServer.Controllers
             Card drawnCard = game.Deck.Cards[0];
             game.Hand.Add(drawnCard);
             game.Deck.Cards.RemoveAt(0);
+            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             return drawnCard;
@@ -168,6 +169,7 @@ namespace PokeServer.Controllers
             if (!game.Deck.Cards.Any(c => c.NumberInDeck == card.NumberInDeck)) return NotFound("Card not found in deck.");
             game.Hand.Add(card);
             game.Deck.Cards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
 
@@ -184,6 +186,7 @@ namespace PokeServer.Controllers
             if (!game.DiscardPile.Any(c => c.NumberInDeck == card.NumberInDeck)) return NotFound("Card not found in discard.");
             game.Hand.Add(card);
             game.DiscardPile.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Discard pile has {game.DiscardPile.Count} cards remaining.");
 
@@ -199,6 +202,7 @@ namespace PokeServer.Controllers
             Card drawnCard = game.PrizeCards[0];
             game.Hand.Add(drawnCard);
             game.PrizeCards.RemoveAt(0);
+            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
             _logger.LogInformation($"1 prize card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"{game.PrizeCards.Count} cards remaining.");
             PrizeCardWrapper prizeCardWrapper = new PrizeCardWrapper
