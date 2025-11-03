@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=11d8deb8-3745-45c2-a31c-9bb657f20850
+@Guid=09652b0f-b620-4e5a-af7c-9542bc578ad9
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -152,16 +152,17 @@ PUT {{PokeServer_HostAddress}}/game/sendtoplayarea/{{guid}}
 Content-Type: application/json
 
 {
-    "$type": "TrainerCard",
-    "effect": "",
-    "type": "",
-    "numberInDeck": "c2d768fe-8d30-45a0-896b-b60d44f79333",
-    "category": "Trainer",
-    "id": "base1-74",
-    "image": "https://assets.tcgdex.net/en/base/base1/74",
-    "name": "Item Finder",
-    "description": ""
-  }
+      "$type": "EnergyCard",
+      "effect": "",
+      "energyType": "Normal",
+      "energyColor": "",
+      "numberInDeck": "5bb1dae2-2572-431f-a78f-74c493f0e5ec",
+      "category": "Energy",
+      "id": "base1-100",
+      "image": "https://assets.tcgdex.net/en/base/base1/100",
+      "name": "Lightning Energy",
+      "description": ""
+    }
 
 ###
 
