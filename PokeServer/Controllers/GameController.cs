@@ -154,6 +154,7 @@ namespace PokeServer.Controllers
             game.Hand.Add(drawnCard);
             game.Deck.Cards.RemoveAt(0);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
+            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             return drawnCard;
@@ -170,6 +171,7 @@ namespace PokeServer.Controllers
             game.Hand.Add(card);
             game.Deck.Cards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
+            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
 
@@ -287,6 +289,7 @@ namespace PokeServer.Controllers
 
             game.Deck.Cards.Add(card);
 
+            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
             _logger.LogInformation("Card {card.Name} placed on bottom of deck for game {guid}.", card.Name, guid);
 
             return NoContent();
