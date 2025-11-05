@@ -257,7 +257,7 @@ namespace PokeServer.Controllers
                 _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
             }
 
-            await _hubContext.Clients.Group(guid).SendAsync("DiscardUpdated", game.DiscardPile);
+            await _hubContext.Clients.Group(guid).SendAsync("DiscardChanged", game.DiscardPile);
 
             return NoContent();
         }
