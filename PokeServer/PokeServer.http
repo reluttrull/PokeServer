@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=09652b0f-b620-4e5a-af7c-9542bc578ad9
+@Guid=7d5154ae-adac-4562-acb6-79b3a6dc031c
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -23,11 +23,11 @@ Content-Type: application/json
   "$type": "TrainerCard",
   "effect": "",
   "type": "",
-  "numberInDeck": "f4935922-9c7a-4249-9464-fb91ace0c351",
+  "numberInDeck": "985471f9-d133-43ee-ad0d-b1c473df1bf2",
   "category": "Trainer",
-  "id": "base1-91",
-  "image": "https://assets.tcgdex.net/en/base/base1/91",
-  "name": "Bill",
+  "id": "base1-92",
+  "image": "https://assets.tcgdex.net/en/base/base1/92",
+  "name": "Energy Removal",
   "description": ""
 }
 
@@ -135,14 +135,15 @@ PUT {{PokeServer_HostAddress}}/game/sendtohand/{{guid}}
 Content-Type: application/json
 
 {
-    "$type": "TrainerCard",
+    "$type": "EnergyCard",
     "effect": "",
-    "type": "",
-    "numberInDeck": "c2d768fe-8d30-45a0-896b-b60d44f79333",
-    "category": "Trainer",
-    "id": "base1-74",
-    "image": "https://assets.tcgdex.net/en/base/base1/74",
-    "name": "Item Finder",
+    "energyType": "Normal",
+    "energyColor": "",
+    "numberInDeck": "12e2f962-3f16-4b4a-9fd9-12ae7f7793c2",
+    "category": "Energy",
+    "id": "base1-100",
+    "image": "https://assets.tcgdex.net/en/base/base1/100",
+    "name": "Lightning Energy",
     "description": ""
   }
 
@@ -152,20 +153,24 @@ PUT {{PokeServer_HostAddress}}/game/sendtoplayarea/{{guid}}
 Content-Type: application/json
 
 {
-      "$type": "EnergyCard",
-      "effect": "",
-      "energyType": "Normal",
-      "energyColor": "",
-      "numberInDeck": "5bb1dae2-2572-431f-a78f-74c493f0e5ec",
-      "category": "Energy",
-      "id": "base1-100",
-      "image": "https://assets.tcgdex.net/en/base/base1/100",
-      "name": "Lightning Energy",
-      "description": ""
-    }
+    "$type": "EnergyCard",
+    "effect": "",
+    "energyType": "Normal",
+    "energyColor": "",
+    "numberInDeck": "12e2f962-3f16-4b4a-9fd9-12ae7f7793c2",
+    "category": "Energy",
+    "id": "base1-100",
+    "image": "https://assets.tcgdex.net/en/base/base1/100",
+    "name": "Lightning Energy",
+    "description": ""
+  }
 
 ###
 
 GET {{PokeServer_HostAddress}}/game/gethand/{{guid}}
+
+###
+
+GET {{PokeServer_HostAddress}}/game/getgamehistory/{{guid}}
 
 ###
