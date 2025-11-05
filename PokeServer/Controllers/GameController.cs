@@ -12,6 +12,7 @@ namespace PokeServer.Controllers
         private readonly ILogger<GameController> _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private int memoryCacheTimeoutHours = 3;
 
         public GameController(ILogger<GameController> logger, IMemoryCache memoryCache, IHubContext<NotificationHub> hubContext)
         {
@@ -50,6 +51,7 @@ namespace PokeServer.Controllers
 
             // populate game object with starting hand and draw prize cards
             game.SetStartingPosition(gameStart.Hand);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_STARTED, gameStart.Hand));
             _logger.LogInformation($"Starting hand set with {game.Hand.Count} cards.");
             _logger.LogInformation($"Starting prize cards set with {game.PrizeCards.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
@@ -58,7 +60,7 @@ namespace PokeServer.Controllers
             if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))
             {
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromHours(3));
+                    .SetSlidingExpiration(TimeSpan.FromHours(memoryCacheTimeoutHours));
                 _memoryCache.Set<Game>(game.Guid.ToString(), game, cacheEntryOptions);
             }
             return gameStart;
@@ -88,6 +90,7 @@ namespace PokeServer.Controllers
         {
             if (_memoryCache.TryGetValue(guid, out Game? game) && game != null)
             {
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_ENDED));
                 _memoryCache.Remove(guid);
                 _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
                 return NoContent();
@@ -114,6 +117,7 @@ namespace PokeServer.Controllers
             game.InPlay.Add(card);
 
             await _hubContext.Clients.Group(guid).SendAsync("CardAddedToPlayArea", card);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_PLAY_AREA, card));
             _logger.LogInformation("Card {card.Name} put in play for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -135,6 +139,7 @@ namespace PokeServer.Controllers
             game.Hand.Add(card);
 
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_RETURNED_TO_HAND, card));
             _logger.LogInformation("Card {card.Name} moved to hand for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -155,6 +160,7 @@ namespace PokeServer.Controllers
             game.Deck.Cards.RemoveAt(0);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
             await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DECK, drawnCard));
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
             return drawnCard;
@@ -172,6 +178,7 @@ namespace PokeServer.Controllers
             game.Deck.Cards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
             await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DECK, card));
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
 
@@ -189,6 +196,7 @@ namespace PokeServer.Controllers
             game.Hand.Add(card);
             game.DiscardPile.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DISCARD, card));
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Discard pile has {game.DiscardPile.Count} cards remaining.");
 
@@ -205,6 +213,7 @@ namespace PokeServer.Controllers
             game.Hand.Add(drawnCard);
             game.PrizeCards.RemoveAt(0);
             await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.PRIZE_CARD_TAKEN, drawnCard));
             _logger.LogInformation($"1 prize card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"{game.PrizeCards.Count} cards remaining.");
             PrizeCardWrapper prizeCardWrapper = new PrizeCardWrapper
@@ -238,6 +247,7 @@ namespace PokeServer.Controllers
 
             game.DiscardPile.Add(card);
 
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
             _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -264,6 +274,7 @@ namespace PokeServer.Controllers
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
 
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.PEEKED_AT_DECK));
             _logger.LogInformation("User peeking at {num} cards in deck.", game.Deck.Cards.Count);
             return game.Deck.Cards;
         }
@@ -290,6 +301,7 @@ namespace PokeServer.Controllers
             game.Deck.Cards.Add(card);
 
             await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_RETURNED_TO_DECK, card));
             _logger.LogInformation("Card {card.Name} placed on bottom of deck for game {guid}.", card.Name, guid);
 
             return NoContent();
@@ -303,6 +315,7 @@ namespace PokeServer.Controllers
 
             Random random = new Random();
             game.Deck.Cards = game.Deck.Cards.OrderBy(Random => random.Next()).ToList();
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DECK_SHUFFLED));
             _logger.LogInformation("Deck shuffled for game {GameGuid}.", guid);
             return NoContent();
         }
@@ -367,6 +380,14 @@ namespace PokeServer.Controllers
         public async Task<List<string>> GetValidEvolutions(string pokemonName)
         {
             return await ApiHelper.GetValidEvolutionNames(pokemonName);
+        }
+
+        [HttpGet]
+        [Route("getgamehistory/{guid}")]
+        public async Task<GameRecord> GetGameHistory(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            return game.GameRecord;
         }
         #endregion other methods
     }

@@ -10,6 +10,7 @@ namespace PokeServer.Model
         public List<Card> PrizeCards { get; set; } = new List<Card>();
         public List<Card> DiscardPile { get; set; } = new List<Card>();
         public List<Card> InPlay { get; set; } = new List<Card>();
+        public GameRecord GameRecord { get; set; } = new GameRecord();
         public Game(int deckId)
         {
             using (StreamReader r = new StreamReader("TestData/TestDecks.json"))
