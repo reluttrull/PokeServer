@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders.Physical;
 using PokeServer.Model;
 
 namespace PokeServer.Controllers
@@ -235,20 +236,28 @@ namespace PokeServer.Controllers
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
             // currently, we have to figure out where this card is being discarded from
-            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else return NotFound("Card not in play.");
-
-            game.DiscardPile.Add(card);
+            game.MoveCardToDiscard(card);
 
             game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
             _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
+            // TODO: change this method to also send DiscardUpdated update, and have client use this trigger
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("discardhand/{guid}")]
+        public async Task<IActionResult> DiscardHand(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            foreach (Card card in game.Hand.ToList())
+            {
+                game.MoveCardToDiscard(card);
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
+                _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
+            }
+
+            await _hubContext.Clients.Group(guid).SendAsync("DiscardUpdated", game.DiscardPile);
 
             return NoContent();
         }

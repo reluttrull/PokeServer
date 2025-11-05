@@ -29,6 +29,21 @@ namespace PokeServer.Model
             }
         }
 
+        public void MoveCardToDiscard(Card card)
+        {
+            // remove card from wherever it is
+            if (Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            else if (InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
+            {
+                InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
+            }
+            // add to discard pile
+            DiscardPile.Add(card);
+        }
+
         internal void SetStartingPosition(List<Card> hand)
         {
             Hand = hand;

@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=1fe6d4af-216a-449a-9788-6a75e2af37b9
+@Guid=2767f4c0-fa76-4108-a5ff-e54bbad769d9
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -172,5 +172,9 @@ GET {{PokeServer_HostAddress}}/game/gethand/{{guid}}
 ###
 
 GET {{PokeServer_HostAddress}}/game/getgamehistory/{{guid}}
+
+###
+
+GET {{PokeServer_HostAddress}}/game/discardhand/{{guid}}
 
 ###
