@@ -3,22 +3,26 @@
     public class GameLog
     {
         public Enums.GameEvent EventType { get; set; }
+        public string Name { get; set; }
         public DateTime Timestamp { get; set; }
         public List<string>? InvolvedCardIds { get; set; }
         public GameLog(Enums.GameEvent eventType)
         {
             EventType = eventType;
+            Name = eventType.ToString();
             Timestamp = DateTime.UtcNow;
         }
         public GameLog(Enums.GameEvent eventType, List<Card> involvedCards)
         {
             EventType = eventType;
+            Name = eventType.ToString();
             InvolvedCardIds = involvedCards.Select(c => c.NumberInDeck.ToString()).ToList();
             Timestamp = DateTime.UtcNow;
         }
         public GameLog(Enums.GameEvent eventType, Card involvedCard)
         {
             EventType = eventType;
+            Name = eventType.ToString();
             InvolvedCardIds = new List<string> { involvedCard.NumberInDeck.ToString() };
             Timestamp = DateTime.UtcNow;
         }
