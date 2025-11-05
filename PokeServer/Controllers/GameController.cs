@@ -52,7 +52,7 @@ namespace PokeServer.Controllers
 
             // populate game object with starting hand and draw prize cards
             game.SetStartingPosition(gameStart.Hand);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_STARTED, gameStart.Hand));
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_STARTED, new List<Card>(gameStart.Hand)));
             foreach (List<Card> mulliganHand in gameStart.MulliganHands)
             {
                 game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DRAW_MULLIGAN, mulliganHand));
