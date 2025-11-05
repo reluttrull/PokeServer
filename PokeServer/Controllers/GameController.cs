@@ -53,6 +53,10 @@ namespace PokeServer.Controllers
             // populate game object with starting hand and draw prize cards
             game.SetStartingPosition(gameStart.Hand);
             game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_STARTED, gameStart.Hand));
+            foreach (List<Card> mulliganHand in gameStart.MulliganHands)
+            {
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DRAW_MULLIGAN, mulliganHand));
+            }
             _logger.LogInformation($"Starting hand set with {game.Hand.Count} cards.");
             _logger.LogInformation($"Starting prize cards set with {game.PrizeCards.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
@@ -338,19 +342,24 @@ namespace PokeServer.Controllers
         }
 
         [HttpGet]
-        [Route("flipcoin")]
-        public async Task<bool> FlipCoin()
+        [Route("flipcoin/{guid}")]
+        public async Task<bool> FlipCoin(string guid)
         {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
             Random rand = new Random();
             bool isHeads = GetFlip(rand);
+            game.GameRecord.Logs.Add(new GameLog(isHeads ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             _logger.LogInformation("Coin flipped: {Result}", isHeads ? "Heads" : "Tails");
             return isHeads;
         }
 
         [HttpGet]
-        [Route("flipxcoins/{x}")]
-        public async Task<List<bool>> FlipXCoins(int x)
+        [Route("flipxcoins/{guid}/{x}")]
+        public async Task<List<bool>> FlipXCoins(string guid, int x)
         {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
             if (x < 1) throw new ArgumentOutOfRangeException("Number of coins to flip must be at least 1.");
             if (x > 20) throw new ArgumentOutOfRangeException("Number of coins to flip must not exceed 20.");
             Random rand = new Random();
@@ -359,15 +368,18 @@ namespace PokeServer.Controllers
             {
                 bool isHeads = GetFlip(rand);
                 Coins.Add(isHeads);
+                game.GameRecord.Logs.Add(new GameLog(isHeads ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             }
             _logger.LogInformation("{HeadsCount} heads flipped out of {TotalFlips} flips.", Coins.Count(c => c), x);
             return Coins;
         }
 
         [HttpGet]
-        [Route("flipcoinsuntil/{isHeads}")]
-        public async Task<int> FlipCoinsUntil(bool isHeads)
+        [Route("flipcoinsuntil/{guid}/{isHeads}")]
+        public async Task<int> FlipCoinsUntil(string guid, bool isHeads)
         {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
             // if first flip matches, returns 0
             Random rand = new Random();
             int flips = -1;
@@ -376,6 +388,7 @@ namespace PokeServer.Controllers
             {
                 flips++;
                 result = GetFlip(rand);
+                game.GameRecord.Logs.Add(new GameLog(result ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             }
             _logger.LogInformation("Flipped {FlipCount} times until {DesiredResult}.", flips, isHeads ? "Heads" : "Tails");
             return flips;

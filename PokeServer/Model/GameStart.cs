@@ -5,6 +5,7 @@
         public string GameGuid { get; set; } = string.Empty;
         public List<Card> Hand { get; set; } = new List<Card>();
         public int Mulligans { get; set; }
+        public List<List<Card>> MulliganHands { get; set; } = new List<List<Card>>();
         public GameStart(string gameGuid, List<Card> deck)
         {
             GameGuid = gameGuid;
@@ -21,6 +22,7 @@
                     Hand = testHand;
                     break;
                 }
+                MulliganHands.Add(testHand);
                 Mulligans++;
             }
         }

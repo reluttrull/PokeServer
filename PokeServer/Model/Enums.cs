@@ -58,6 +58,9 @@
             //POKEMON_KNOCKED_OUT = 407,
             DECK_SHUFFLED = 501,
             PEEKED_AT_DECK = 502,
+            DRAW_MULLIGAN = 503,
+            COIN_FLIPPED_HEADS = 504,
+            COIN_FLIPPED_TAILS = 505,
             GAME_ENDED = 1000
         }
     }
