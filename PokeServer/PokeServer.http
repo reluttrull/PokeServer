@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=d7afb33f-ce6d-4a50-8310-7fa0f51c2070
+@Guid=e546395a-6389-4bb6-9dd1-5cbed276431a
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###

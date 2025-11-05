@@ -93,14 +93,13 @@ namespace PokeServer.Controllers
         [Route("endgame/{guid}")]
         public async Task<IActionResult> EndGame(string guid)
         {
-            if (_memoryCache.TryGetValue(guid, out Game? game) && game != null)
-            {
-                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_ENDED));
-                _memoryCache.Remove(guid);
-                _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
-                return NoContent();
-            }
-            return NotFound("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_ENDED));
+            _memoryCache.Remove(guid);
+            await _hubContext.Clients.Group(guid).SendAsync("GameOver");
+            _logger.LogInformation("Game {GameGuid} ended and removed from cache.", guid);
+            return NoContent();
         }
 
         #endregion game management
