@@ -3,6 +3,7 @@
     "DeckId": 0,
     "Name": "Haymaker",
     "Description": "A deck focused on powerful, straightforward attacks.",
+    "IsDefault": true,
     "CardIds": [
       "base1-7", "base1-7", "base1-7", "base1-7",
       "base1-20", "base1-20", "base1-20",
@@ -31,6 +32,7 @@
     "DeckId": 1,
     "Name": "Rain Dance",
     "Description": "A deck that utilizes water-type Pokémon and rain effects.",
+    "IsDefault": true,
     "CardIds": [
       "base1-2", "base1-2", "base1-2",
       "base1-6", "base1-6", "base1-6",
@@ -58,6 +60,7 @@
     "DeckId": 2,
     "Name":  "Machamp/Alakazam",
     "Description":  "A deck centered around Machamp and Alakazam for strong offense and healing.",
+    "IsDefault": true,
     "CardIds":  [
       "base1-43", "base1-43", "base1-43", "base1-43",
       "base1-32", "base1-32",
@@ -88,6 +91,7 @@
     "DeckId": 3,
     "Name":  "Buzzapdos",
     "Description":  "A deck built around Zapdos and Electrode's energy acceleration.",
+    "IsDefault": true,
     "CardIds": [
       "base1-16", "base1-16", "base1-16", "base1-16",
       "base1-67", "base1-67", "base1-67", "base1-67",
@@ -112,5 +116,12 @@
       "base1-100", "base1-100", "base1-100", "base1-100", "base1-100", "base1-100",
       "base1-100", "base1-100", "base1-100", "base1-100", "base1-100"
     ]
+  },
+  {
+    "DeckId": 4,
+    "Name": "testing remaining cards",
+    "Description":  "",
+    "IsDefault": false,
+    "CardIds": ["base1-22","base1-57","base1-50","base1-29","base1-70","base1-87","base1-88","base1-71","base1-91","base1-78","base1-93","base1-94","base1-84","base1-74","base1-77","base1-90","base1-101","base1-96"]
   }
 ]

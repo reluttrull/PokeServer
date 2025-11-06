@@ -29,7 +29,7 @@ namespace PokeServer.Controllers
             {
                 string json = r.ReadToEnd();
                 List<Deck> decks = JsonSerializer.Deserialize<List<Deck>>(json);
-                foreach (Deck deck in decks)
+                foreach (Deck deck in decks.Where(d => d.IsDefault))
                 {
                     DeckBrief deckBrief = new DeckBrief
                     {
