@@ -71,16 +71,6 @@ namespace PokeServer.Controllers
             return gameStart;
         }
 
-
-        [HttpGet]
-        [Route("gethand/{guid}")]
-        public async Task<List<Card>> GetHand(string guid)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-
-            return game.Hand;
-        }
-
         [HttpGet]
         [Route("checkgameactive/{guid}")]
         public async Task<bool> CheckGameActive(string guid)
@@ -104,168 +94,54 @@ namespace PokeServer.Controllers
 
         #endregion game management
 
-        #region device management
-        [HttpPut]
-        [Route("sendtoplayarea/{guid}")]
-        public async Task<IActionResult> SendToPlayArea(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-
-            // currently, we have to figure out where this card is being discarded from
-            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else return NotFound("Card not in hand.");
-
-            game.InPlay.Add(card);
-
-            await _hubContext.Clients.Group(guid).SendAsync("CardAddedToPlayArea", card);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_PLAY_AREA, card));
-            _logger.LogInformation("Card {card.Name} put in play for game {guid}.", card.Name, guid);
-
-            return NoContent();
-        }
-
-        [HttpPut]
-        [Route("sendtohand/{guid}")]
-        public async Task<IActionResult> SendToHand(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-
-            // currently, we have to figure out where this card is being discarded from
-            if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else return NotFound("Card not in play.");
-
-            game.Hand.Add(card);
-
-            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_RETURNED_TO_HAND, card));
-            _logger.LogInformation("Card {card.Name} moved to hand for game {guid}.", card.Name, guid);
-
-            return NoContent();
-        }
-        #endregion device management
-
-        #region draw methods
+        #region collection getters
 
         [HttpGet]
-        [Route("drawcardfromdeck/{guid}")]
-        public async Task<Card> DrawCardFromDeck(string guid) // top card
+        [Route("gethand/{guid}")]
+        public async Task<List<Card>> GetHand(string guid)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.Deck.Cards.Count < 1) throw new IndexOutOfRangeException("No cards left in deck.");
 
-            Card drawnCard = game.Deck.Cards[0];
-            game.Hand.Add(drawnCard);
-            game.Deck.Cards.RemoveAt(0);
-            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
-            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DECK, drawnCard));
-            _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
-            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
-            return drawnCard;
-        }
-
-        [HttpPut]
-        [Route("drawthiscardfromdeck/{guid}")]
-        public async Task<IActionResult> DrawThisCardFromDeck(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-            if (game.Deck.Cards.Count < 1) return NotFound("No cards left in deck.");
-
-            if (!game.Deck.Cards.Any(c => c.NumberInDeck == card.NumberInDeck)) return NotFound("Card not found in deck.");
-            game.Hand.Add(card);
-            game.Deck.Cards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
-            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DECK, card));
-            _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
-            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
-
-            return NoContent();
-        }
-
-        [HttpPut]
-        [Route("drawthiscardfromdiscard/{guid}")]
-        public async Task<IActionResult> DrawThisCardFromDiscard(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-            if (game.DiscardPile.Count < 1) return NotFound("No cards in discard.");
-
-            if (!game.DiscardPile.Any(c => c.NumberInDeck == card.NumberInDeck)) return NotFound("Card not found in discard.");
-            game.Hand.Add(card);
-            game.DiscardPile.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", card);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DISCARD, card));
-            _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
-            _logger.LogInformation($"Discard pile has {game.DiscardPile.Count} cards remaining.");
-
-            return NoContent();
+            return game.Hand;
         }
 
         [HttpGet]
-        [Route("drawcardfromprizes/{guid}")]
-        public async Task<PrizeCardWrapper> DrawCardFromPrizes(string guid)
+        [Route("gettemphand/{guid}")]
+        public async Task<List<Card>> GetTempHand(string guid)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.PrizeCards.Count < 1) throw new IndexOutOfRangeException("No prize cards left.");
-            Card drawnCard = game.PrizeCards[0];
-            game.Hand.Add(drawnCard);
-            game.PrizeCards.RemoveAt(0);
-            await _hubContext.Clients.Group(guid).SendAsync("CardMovedToHand", drawnCard);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.PRIZE_CARD_TAKEN, drawnCard));
-            _logger.LogInformation($"1 prize card drawn, hand has {game.Hand.Count} cards.");
-            _logger.LogInformation($"{game.PrizeCards.Count} cards remaining.");
-            PrizeCardWrapper prizeCardWrapper = new PrizeCardWrapper
-            {
-                PrizeCard = drawnCard,
-                RemainingPrizes = game.PrizeCards.Count
-            };
-            return prizeCardWrapper;
-        }
 
-        #endregion draw methods
-
-        #region discard methods
-
-        [HttpPut]
-        [Route("discardcard/{guid}")]
-        public async Task<IActionResult> DiscardCard(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-
-            // currently, we have to figure out where this card is being discarded from
-            game.MoveCardToDiscard(card);
-
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
-            _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
-            // TODO: change this method to also send DiscardUpdated update, and have client use this trigger
-
-            return NoContent();
+            return game.TempHand;
         }
 
         [HttpGet]
-        [Route("discardhand/{guid}")]
-        public async Task<IActionResult> DiscardHand(string guid)
+        [Route("getactive/{guid}")]
+        public async Task<PlaySpot> GetActive(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-            foreach (Card card in game.Hand.ToList())
-            {
-                game.MoveCardToDiscard(card);
-                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
-                _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
-            }
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
 
-            await _hubContext.Clients.Group(guid).SendAsync("DiscardChanged", game.DiscardPile);
-
-            return NoContent();
+            return game.Active;
         }
 
-        #endregion discard methods
+        [HttpGet]
+        [Route("getbench/{guid}")]
+        public async Task<List<PlaySpot>> GetBench(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
+            return game.Bench;
+        }
+
+        [HttpGet]
+        [Route("getdiscard/{guid}")]
+        public async Task<List<Card>> GetDiscard(string guid)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+
+            return game.DiscardPile;
+        }
+
+        #endregion collection getters
 
         #region peek methods
         [HttpGet]
@@ -293,32 +169,6 @@ namespace PokeServer.Controllers
         #endregion peek methods
 
         #region deck management methods
-        [HttpPut]
-        [Route("placecardonbottomofdeck/{guid}")]
-        public async Task<IActionResult> PlaceCardOnBottomOfDeck(string guid, Card card)
-        {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
-
-            // currently, we have to figure out where this card is being discarded from
-            if (game.Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (game.InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                game.InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else return NotFound("Card not in play.");
-
-            game.Deck.Cards.Add(card);
-
-            await _hubContext.Clients.Group(guid).SendAsync("DeckChanged", game.Deck.Cards.Count);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_RETURNED_TO_DECK, card));
-            _logger.LogInformation("Card {card.Name} placed on bottom of deck for game {guid}.", card.Name, guid);
-
-            return NoContent();
-        }
-
         [HttpPut]
         [Route("shuffledeck/{guid}")]
         public async Task<IActionResult> ShuffleDeck(string guid)

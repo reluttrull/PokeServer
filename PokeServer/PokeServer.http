@@ -6,31 +6,8 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=e546395a-6389-4bb6-9dd1-5cbed276431a
+@Guid=46443d6b-cbcc-4a2f-bef2-b68d0b285440
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
-
-###
-
-GET {{PokeServer_HostAddress}}/game/drawcardfromdeck/{{guid}}
-
-###
-
-
-PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
-Content-Type: application/json
-
-{
-  "$type": "TrainerCard",
-  "effect": "",
-  "type": "",
-  "numberInDeck": "985471f9-d133-43ee-ad0d-b1c473df1bf2",
-  "category": "Trainer",
-  "id": "base1-92",
-  "image": "https://assets.tcgdex.net/en/base/base1/92",
-  "name": "Energy Removal",
-  "description": ""
-}
-
 
 ###
 
@@ -38,132 +15,15 @@ PUT {{PokeServer_HostAddress}}/game/endgame/{{guid}}
 
 ###
 
-GET {{PokeServer_HostAddress}}/game/flipcoin
+GET {{PokeServer_HostAddress}}/game/getactive/{{guid}}
 
 ###
 
-@x=15
-GET {{PokeServer_HostAddress}}/game/flipxcoins/{{x}}
+GET {{PokeServer_HostAddress}}/game/getbench/{{guid}}
 
 ###
 
-@isHeads=False
-GET {{PokeServer_HostAddress}}/game/flipcoinsuntil/{{isHeads}}
-
-###
-
-GET {{PokeServer_HostAddress}}/game/drawcardfromprizes/{{guid}}
-
-###
-
-PUT {{PokeServer_HostAddress}}/game/placecardonbottomofdeck/{{guid}}
-Content-Type: application/json
-
-{
-    "$type": "TrainerCard",
-    "effect": "",
-    "type": "",
-    "numberInDeck": "5aee22ea-01e2-4ddb-8a35-078846e28b7d",
-    "category": "Trainer",
-    "id": "base1-74",
-    "image": "https://assets.tcgdex.net/en/base/base1/74",
-    "name": "Item Finder",
-    "description": ""
-  }
-
-###
-
-PUT {{PokeServer_HostAddress}}/game/shuffledeck/{{guid}}
-
-###
-
-@pos=0
-GET {{PokeServer_HostAddress}}/game/peekatcardindeckatposition/{{guid}}/{{pos}}
-
-###
-
-
-PUT {{PokeServer_HostAddress}}/game/drawthiscardfromdeck/{{guid}}
-Content-Type: application/json
-
-{
-  "$type": "EnergyCard",
-  "effect": "",
-  "energyType": "Normal",
-  "energyColor": "",
-  "numberInDeck": "03f90aca-6cf3-4854-97c2-76a74c7ba861",
-  "category": "Energy",
-  "id": "base1-102",
-  "image": "https://assets.tcgdex.net/en/base/base1/102",
-  "name": "Water Energy",
-  "description": ""
-}
-
-###
-
-GET {{PokeServer_HostAddress}}/game/peekatallcardsindeck/{{guid}}
-
-###
-
-PUT {{PokeServer_HostAddress}}/game/drawthiscardfromdiscard/{{guid}}
-Content-Type: application/json
-
-{
-  "$type": "TrainerCard",
-  "effect": "",
-  "type": "",
-  "numberInDeck": "f4935922-9c7a-4249-9464-fb91ace0c351",
-  "category": "Trainer",
-  "id": "base1-91",
-  "image": "https://assets.tcgdex.net/en/base/base1/91",
-  "name": "Bill",
-  "description": ""
-}
-
-###
-
-@pokemonName=Eevee
-GET {{PokeServer_HostAddress}}/game/getvalidevolutions/{{pokemonName}}
-
-###
-
-GET {{PokeServer_HostAddress}}/deck/getalldeckbriefs
-
-###
-
-PUT {{PokeServer_HostAddress}}/game/sendtohand/{{guid}}
-Content-Type: application/json
-
-{
-    "$type": "EnergyCard",
-    "effect": "",
-    "energyType": "Normal",
-    "energyColor": "",
-    "numberInDeck": "12e2f962-3f16-4b4a-9fd9-12ae7f7793c2",
-    "category": "Energy",
-    "id": "base1-100",
-    "image": "https://assets.tcgdex.net/en/base/base1/100",
-    "name": "Lightning Energy",
-    "description": ""
-  }
-
-###
-
-PUT {{PokeServer_HostAddress}}/game/sendtoplayarea/{{guid}}
-Content-Type: application/json
-
-{
-    "$type": "EnergyCard",
-    "effect": "",
-    "energyType": "Normal",
-    "energyColor": "",
-    "numberInDeck": "12e2f962-3f16-4b4a-9fd9-12ae7f7793c2",
-    "category": "Energy",
-    "id": "base1-100",
-    "image": "https://assets.tcgdex.net/en/base/base1/100",
-    "name": "Lightning Energy",
-    "description": ""
-  }
+GET {{PokeServer_HostAddress}}/game/getdiscard/{{guid}}
 
 ###
 
@@ -171,22 +31,63 @@ GET {{PokeServer_HostAddress}}/game/gethand/{{guid}}
 
 ###
 
-GET {{PokeServer_HostAddress}}/game/getgamehistory/{{guid}}
+GET {{PokeServer_HostAddress}}/game/gettemphand/{{guid}}
 
 ###
 
-GET {{PokeServer_HostAddress}}/game/discardhand/{{guid}}
+PUT {{PokeServer_HostAddress}}/game/movetoactive/{{guid}}
+Content-Type: application/json
+
+{
+    "$type": "EnergyCard",
+    "effect": "",
+    "energyType": "Normal",
+    "energyColor": "",
+    "numberInDeck": "5f9fe015-5cf0-4f42-b5c7-6831a2d39a7a",
+    "category": "Energy",
+    "id": "base1-100",
+    "image": "https://assets.tcgdex.net/en/base/base1/100",
+    "name": "Lightning Energy",
+    "description": ""
+  }
 
 ###
 
-GET {{PokeServer_HostAddress}}/game/flipcoin/{{guid}}
+PUT {{PokeServer_HostAddress}}/game/movetobench/{{guid}}
+Content-Type: application/json
 
-###
-
-GET {{PokeServer_HostAddress}}/game/flipcoinsuntil/{{guid}}/{{isHeads}}
-
-###
-
-GET {{PokeServer_HostAddress}}/game/flipxcoins/{{guid}}/{{x}}
+{
+    "$type": "PokemonCard",
+    "hp": 50,
+    "types": [
+      "Colorless"
+    ],
+    "evolveFrom": "",
+    "stage": "Basic",
+    "abilities": [],
+    "attacks": [
+      {
+        "cost": [
+          "Colorless"
+        ],
+        "name": "Fury Attack",
+        "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
+        "damage": "10x"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "retreatCost": 0,
+    "numberInDeck": "6e50c837-602e-4376-bff7-87655e2c79b5",
+    "category": "Pokemon",
+    "id": "base1-48",
+    "image": "https://assets.tcgdex.net/en/base/base1/48",
+    "name": "Doduo",
+    "description": ""
+  }
 
 ###

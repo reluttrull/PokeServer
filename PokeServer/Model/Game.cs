@@ -6,10 +6,12 @@ namespace PokeServer.Model
     {
         public Guid Guid { get; set; } = Guid.NewGuid();
         public Deck Deck { get; set; }
-        public List<Card> Hand { get; set; } = new List<Card>();
         public List<Card> PrizeCards { get; set; } = new List<Card>();
+        public List<Card> Hand { get; set; } = new List<Card>();
+        public List<Card> TempHand { get; set; } = new List<Card>();
+        public PlaySpot Active { get; set; } = new PlaySpot();
+        public List<PlaySpot> Bench { get; set; } = new List<PlaySpot>();
         public List<Card> DiscardPile { get; set; } = new List<Card>();
-        public List<Card> InPlay { get; set; } = new List<Card>();
         public GameRecord GameRecord { get; set; } = new GameRecord();
         public Game(int deckId)
         {
@@ -27,21 +29,6 @@ namespace PokeServer.Model
                     throw new ArgumentException($"Deck with ID {deckId} not found.");
                 }
             }
-        }
-
-        public void MoveCardToDiscard(Card card)
-        {
-            // remove card from wherever it is
-            if (Hand.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                Hand.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            else if (InPlay.Any(c => c.NumberInDeck == card.NumberInDeck))
-            {
-                InPlay.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
-            }
-            // add to discard pile
-            DiscardPile.Add(card);
         }
 
         internal void SetStartingPosition(List<Card> hand)
