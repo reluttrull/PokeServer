@@ -232,7 +232,6 @@ namespace PokeServer.Controllers
 
         #endregion draw methods
 
-
         #region discard methods
 
         [HttpPut]
@@ -294,6 +293,56 @@ namespace PokeServer.Controllers
         }
 
         #endregion discard methods
+
+        #region damage methods
+        [HttpPut]
+        [Route("adddamagecounters/{guid}/{toCardId}/{amount}")]
+        public async Task<IActionResult> AddDamageCounters(string guid, string toCardId, int amount)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.Active.MainCard?.NumberInDeck.ToString() == toCardId)
+            {
+                game.Active.DamageCounters += amount;
+                await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DAMAGE_COUNTERS_ADDED_TO_ACTIVE_POKEMON, game.Active, $"{amount}"));
+            }
+            else if (game.Bench.Any(spot => spot.MainCard?.NumberInDeck.ToString() == toCardId))
+            {
+                PlaySpot benchSpot = game.Bench.Where(spot => spot.MainCard?.NumberInDeck.ToString() == toCardId).First();
+                benchSpot.DamageCounters += amount;
+                await _hubContext.Clients.Group(guid).SendAsync("BenchChanged", game.Bench);
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DAMAGE_COUNTERS_ADDED_TO_BENCH_POKEMON, benchSpot, $"{amount}"));
+            }
+            else return NotFound("Card not in play.");
+
+            _logger.LogInformation("Added {amount} damage to card {toCardId} for game {guid}.", amount, toCardId, guid);
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("removedamagecounters/{guid}/{toCardId}/{amount}")]
+        public async Task<IActionResult> RemoveDamageCounters(string guid, string toCardId, int amount)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.Active.MainCard?.NumberInDeck.ToString() == toCardId)
+            {
+                game.Active.DamageCounters = Math.Max(game.Active.DamageCounters - amount, 0);
+                await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DAMAGE_COUNTERS_REMOVED_FROM_ACTIVE_POKEMON, game.Active, $"{amount}"));
+            }
+            else if (game.Bench.Any(spot => spot.MainCard?.NumberInDeck.ToString() == toCardId))
+            {
+                PlaySpot benchSpot = game.Bench.Where(spot => spot.MainCard?.NumberInDeck.ToString() == toCardId).First();
+                benchSpot.DamageCounters = Math.Max(benchSpot.DamageCounters - amount, 0);
+                await _hubContext.Clients.Group(guid).SendAsync("BenchChanged", game.Bench);
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DAMAGE_COUNTERS_REMOVED_FROM_BENCH_POKEMON, benchSpot, $"{amount}"));
+            }
+            else return NotFound("Card not in play.");
+
+            _logger.LogInformation("Removed up to {amount} damage to card {toCardId} for game {guid}.", amount, toCardId, guid);
+            return NoContent();
+        }
+        #endregion damage methods
 
         private async Task<bool> RemoveCardFromCurrentLocation(Game game, Card card)
         {
