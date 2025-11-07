@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=74050695-856f-4d89-901c-4dab795c4bf0
+@Guid=552d411f-e1c5-4afd-8c0d-76842fa3d9dc
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -141,5 +141,58 @@ Content-Type: application/json
 ###
 
 GET {{PokeServer_HostAddress}}/game/discardhand/{{guid}}
+
+###
+
+@toCardId=53a8f61d-a1b1-4011-9499-68bf4062792f
+@amount=3
+PUT {{PokeServer_HostAddress}}/game/adddamagecounters/{{guid}}/{{toCardId}}/{{amount}}
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/removedamagecounters/{{guid}}/{{toCardId}}/{{amount}}
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/movetoactive/{{guid}}
+Content-Type: application/json
+
+{
+  "mainCard": {
+      "$type": "PokemonCard",
+      "hp": 40,
+      "types": [
+        "Lightning"
+      ],
+      "evolveFrom": "",
+      "stage": "Basic",
+      "abilities": [],
+      "attacks": [
+        {
+          "cost": [
+            "Colorless"
+          ],
+          "name": "Tackle",
+          "effect": "",
+          "damage": "10"
+        }
+      ],
+      "weaknesses": [
+        {
+          "type": "Fighting",
+          "value": "×2"
+        }
+      ],
+      "retreatCost": 0,
+      "numberInDeck": "53a8f61d-a1b1-4011-9499-68bf4062792f",
+      "category": "Pokemon",
+      "id": "base1-67",
+      "image": "https://assets.tcgdex.net/en/base/base1/67",
+      "name": "Voltorb",
+      "description": ""
+    },
+    "attachedCards": [],
+    "damageCounters": 0
+}
 
 ###

@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public DateTime Timestamp { get; set; }
         public List<Card>? InvolvedCards { get; set; }
+        public string? AdditionalInfo { get; set; } = null;
         public GameLog(Enums.GameEvent eventType)
         {
             EventType = eventType;
@@ -26,7 +27,7 @@
             InvolvedCards = new List<Card> { involvedCard };
             Timestamp = DateTime.UtcNow;
         }
-        public GameLog(Enums.GameEvent eventType, PlaySpot playSpot)
+        public GameLog(Enums.GameEvent eventType, PlaySpot playSpot, string? additionalInfo = null)
         {
             EventType = eventType;
             Name = eventType.ToString();
@@ -37,7 +38,6 @@
             }
             InvolvedCards.AddRange(playSpot.AttachedCards);
             Timestamp = DateTime.UtcNow;
-
         }
     }
 }
