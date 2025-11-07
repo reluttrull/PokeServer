@@ -245,7 +245,7 @@ namespace PokeServer.Controllers
             if (!success) return NotFound("Card not in play.");
 
             // add to discard pile
-            game.DiscardPile.Add(card);
+            game.DiscardPile.Insert(0, card);
 
             await _hubContext.Clients.Group(guid).SendAsync("DiscardChanged", game.DiscardPile);
             game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
@@ -265,7 +265,7 @@ namespace PokeServer.Controllers
                 bool success = await RemoveCardFromCurrentLocation(game, card);
                 if (!success) return NotFound("Card not in play.");
 
-                game.DiscardPile.Add(card);
+                game.DiscardPile.Insert(0, card);
                 game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
                 _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
             }

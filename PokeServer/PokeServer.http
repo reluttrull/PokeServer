@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=46443d6b-cbcc-4a2f-bef2-b68d0b285440
+@Guid=74050695-856f-4d89-901c-4dab795c4bf0
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -89,5 +89,57 @@ Content-Type: application/json
     "name": "Doduo",
     "description": ""
   }
+
+###
+
+PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
+Content-Type: application/json
+
+{
+    "$type": "PokemonCard",
+    "hp": 90,
+    "types": [
+      "Lightning"
+    ],
+    "evolveFrom": "",
+    "stage": "Basic",
+    "abilities": [],
+    "attacks": [
+      {
+        "cost": [
+          "Lightning",
+          "Lightning",
+          "Lightning",
+          "Colorless"
+        ],
+        "name": "Thunder",
+        "effect": "Flip a coin. If tails, Zapdos does 30 damage to itself.",
+        "damage": "60"
+      },
+      {
+        "cost": [
+          "Lightning",
+          "Lightning",
+          "Lightning",
+          "Lightning"
+        ],
+        "name": "Thunderbolt",
+        "effect": "Discard all Energy cards attached to Zapdos in order to use this attack.",
+        "damage": "100"
+      }
+    ],
+    "weaknesses": [],
+    "retreatCost": 0,
+    "numberInDeck": "91f06993-b2ba-4be2-abaa-99fbc081dcdc",
+    "category": "Pokemon",
+    "id": "base1-16",
+    "image": "https://assets.tcgdex.net/en/base/base1/16",
+    "name": "Zapdos",
+    "description": ""
+  }
+
+###
+
+GET {{PokeServer_HostAddress}}/game/discardhand/{{guid}}
 
 ###
