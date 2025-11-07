@@ -64,40 +64,64 @@ namespace PokeServer.Controllers
         }
 
         [HttpPut]
-        [Route("movetoactive/{guid}")]
-        public async Task<IActionResult> MoveToActive(string guid, Card card)
+        [Route("movetobench/{guid}")]
+        public async Task<IActionResult> MoveToBench(string guid, PlaySpot playSpot)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (playSpot.MainCard == null) return NotFound("No card to move.");
 
-            bool success = await RemoveCardFromCurrentLocation(game, card);
+            bool success = await RemoveCardFromCurrentLocation(game, playSpot.MainCard);
             if (!success) return NotFound("Card not in play.");
 
-            game.Active.MainCard = card;
-            game.Active.AttachedCards = new(); // need to attach cards in separate request
+            game.Bench.Add(playSpot);
+            game.Bench.RemoveAll(spot => playSpot.AttachedCards.Any(ac => ac.NumberInDeck == spot.MainCard?.NumberInDeck));
 
-            await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_ACTIVE, card));
-            _logger.LogInformation("Card {card.Name} moved to hand for game {guid}.", card.Name, guid);
+            await _hubContext.Clients.Group(guid).SendAsync("BenchChanged", game.Bench);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_BENCH, playSpot));
+            _logger.LogInformation("Card {card.Name} moved from active to bench for game {guid}.", playSpot.MainCard?.Name, guid);
 
             return NoContent();
         }
 
         [HttpPut]
-        [Route("movetobench/{guid}")]
-        public async Task<IActionResult> MoveToBench(string guid, Card card)
+        [Route("movetoactive/{guid}")]
+        public async Task<IActionResult> MoveToActive(string guid, PlaySpot playSpot)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (playSpot.MainCard == null) return NotFound("No card to move.");
 
-            bool success = await RemoveCardFromCurrentLocation(game, card);
+            bool success = await RemoveCardFromCurrentLocation(game, playSpot.MainCard);
             if (!success) return NotFound("Card not in play.");
 
-            PlaySpot benchSpot = new PlaySpot();
-            benchSpot.MainCard = card;
-            game.Bench.Add(benchSpot);
+            game.Active = playSpot;
+
+            await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_ACTIVE, playSpot));
+            _logger.LogInformation("Card {card.Name} moved from bench to active for game {guid}.", playSpot.MainCard?.Name, guid);
+
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("swapactivewithbench/{guid}")]
+        public async Task<IActionResult> SwapActiveWithBench(string guid, List<PlaySpot> playSpotsToSwap)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.Active.MainCard?.NumberInDeck.Equals(playSpotsToSwap[0].MainCard?.NumberInDeck) == true)
+            {
+                // make sure first is former bench
+                playSpotsToSwap.Reverse();
+            }
+            game.Bench.Add(playSpotsToSwap[1]);
+            game.Active = playSpotsToSwap[0];
+            game.Bench.RemoveAll(spot => spot.MainCard?.NumberInDeck.Equals(playSpotsToSwap[0].MainCard?.NumberInDeck) == true);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_ACTIVE, playSpotsToSwap[0]));
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_BENCH, playSpotsToSwap[1]));
 
             await _hubContext.Clients.Group(guid).SendAsync("BenchChanged", game.Bench);
-            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_BENCH, card));
-            _logger.LogInformation("Card {card.Name} moved to hand for game {guid}.", card.Name, guid);
+            await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
+            _logger.LogInformation("Card {card.Name} moved from bench to active for game {guid}.", playSpotsToSwap[0].MainCard?.Name, guid);
+            _logger.LogInformation("Card {card.Name} moved from active to bench for game {guid}.", playSpotsToSwap[1].MainCard?.Name, guid);
 
             return NoContent();
         }
@@ -241,6 +265,7 @@ namespace PokeServer.Controllers
                 bool success = await RemoveCardFromCurrentLocation(game, card);
                 if (!success) return NotFound("Card not in play.");
 
+                game.DiscardPile.Add(card);
                 game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
                 _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
             }

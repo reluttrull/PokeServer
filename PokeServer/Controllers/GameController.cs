@@ -191,6 +191,16 @@ namespace PokeServer.Controllers
         }
 
         [HttpGet]
+        [Route("flipcoin/")]
+        public async Task<bool> FlipCoin()
+        {
+            Random rand = new Random();
+            bool isHeads = GetFlip(rand);
+            _logger.LogInformation("Coin flipped: {Result}", isHeads ? "Heads" : "Tails");
+            return isHeads;
+        }
+
+        [HttpGet]
         [Route("flipcoin/{guid}")]
         public async Task<bool> FlipCoin(string guid)
         {

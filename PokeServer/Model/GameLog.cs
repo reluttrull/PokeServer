@@ -26,5 +26,18 @@
             InvolvedCards = new List<Card> { involvedCard };
             Timestamp = DateTime.UtcNow;
         }
+        public GameLog(Enums.GameEvent eventType, PlaySpot playSpot)
+        {
+            EventType = eventType;
+            Name = eventType.ToString();
+            InvolvedCards = new List<Card>();
+            if (playSpot.MainCard != null)
+            {
+                InvolvedCards.Add(playSpot.MainCard);
+            }
+            InvolvedCards.AddRange(playSpot.AttachedCards);
+            Timestamp = DateTime.UtcNow;
+
+        }
     }
 }
