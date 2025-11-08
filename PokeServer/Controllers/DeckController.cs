@@ -19,6 +19,31 @@ namespace PokeServer.Controllers
         }
 
         [HttpGet]
+        [Route("getpublicdeckbriefs")]
+        public async Task<List<DeckBrief>> GetPublicDeckBriefs()
+        {
+            List<DeckBrief> deckBriefs = new();
+
+
+            using (StreamReader r = new StreamReader("TestData/TestDecks.json"))
+            {
+                string json = r.ReadToEnd();
+                List<Deck> decks = JsonSerializer.Deserialize<List<Deck>>(json);
+                foreach (Deck deck in decks.Where(d => d.IsDefault))
+                {
+                    DeckBrief deckBrief = new DeckBrief
+                    {
+                        DeckId = deck.DeckId,
+                        Name = deck.Name,
+                        Description = deck.Description
+                    };
+                    deckBriefs.Add(deckBrief);
+                }
+            }
+            return deckBriefs;
+        }
+
+        [HttpGet]
         [Route("getalldeckbriefs")]
         public async Task<List<DeckBrief>> GetAllDeckBriefs()
         {
@@ -29,7 +54,7 @@ namespace PokeServer.Controllers
             {
                 string json = r.ReadToEnd();
                 List<Deck> decks = JsonSerializer.Deserialize<List<Deck>>(json);
-                foreach (Deck deck in decks.Where(d => d.IsDefault))
+                foreach (Deck deck in decks)
                 {
                     DeckBrief deckBrief = new DeckBrief
                     {

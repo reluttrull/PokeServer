@@ -200,3 +200,11 @@ Content-Type: application/json
 GET {{PokeServer_HostAddress}}/game/getgamehistory/{{guid}}
 
 ###
+
+GET {{PokeServer_HostAddress}}/deck/getalldeckbriefs
+
+###
+
+GET {{PokeServer_HostAddress}}/deck/getpublicdeckbriefs
+
+###
