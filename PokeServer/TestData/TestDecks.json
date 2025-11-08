@@ -122,6 +122,6 @@
     "Name": "testing remaining cards",
     "Description":  "",
     "IsDefault": false,
-    "CardIds": ["base1-22","base1-57","base1-50","base1-29","base1-70","base1-87","base1-88","base1-71","base1-91","base1-78","base1-93","base1-94","base1-84","base1-74","base1-77","base1-90","base1-101","base1-96"]
+    "CardIds": ["base1-22","base1-22","base1-22","base1-22","base1-57","base1-57","base1-57","base1-57","base1-50","base1-50","base1-50","base1-50","base1-29","base1-29","base1-29","base1-29","base1-70","base1-70","base1-70","base1-70","base1-87","base1-87","base1-87","base1-87","base1-88","base1-88","base1-88","base1-71","base1-91","base1-91","base1-91","base1-91","base1-78","base1-78","base1-93","base1-93","base1-93","base1-94","base1-94","base1-94","base1-84","base1-84","base1-74","base1-74","base1-77","base1-77","base1-90","base1-90","base1-101","base1-101","base1-101","base1-101","base1-101","base1-101","base1-101","base1-101","base1-101","base1-96","base1-96","base1-96"]
   }
 ]
