@@ -259,16 +259,18 @@ namespace PokeServer.Controllers
         public async Task<IActionResult> DiscardHand(string guid)
         {
             if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            List<Card> discardedCards = new();
             foreach (Card card in game.Hand.ToList())
             {
                 bool success = await RemoveCardFromCurrentLocation(game, card);
                 if (!success) return NotFound("Card not in play.");
 
                 game.DiscardPile.Insert(0, card);
-                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_DISCARD, card));
+                discardedCards.Add(card);
                 _logger.LogInformation("Card {card.Name} placed in discard pile for game {guid}.", card.Name, guid);
             }
 
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.HAND_MOVED_TO_DISCARD, discardedCards));
             await _hubContext.Clients.Group(guid).SendAsync("DiscardChanged", game.DiscardPile);
 
             return NoContent();
