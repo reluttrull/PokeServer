@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=552d411f-e1c5-4afd-8c0d-76842fa3d9dc
+@Guid=bbe48b9e-bfcb-40c3-9ae0-03b5a83508e6
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -194,5 +194,9 @@ Content-Type: application/json
     "attachedCards": [],
     "damageCounters": 0
 }
+
+###
+
+GET {{PokeServer_HostAddress}}/game/getgamehistory/{{guid}}
 
 ###
