@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=bbe48b9e-bfcb-40c3-9ae0-03b5a83508e6
+@Guid=ce7a1f31-d3ac-49bc-b656-44f0b615bb87
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -206,5 +206,10 @@ GET {{PokeServer_HostAddress}}/deck/getalldeckbriefs
 ###
 
 GET {{PokeServer_HostAddress}}/deck/getpublicdeckbriefs
+
+###
+
+@x=0
+GET {{PokeServer_HostAddress}}/game/flipxcoins/{{guid}}/{{x}}
 
 ###

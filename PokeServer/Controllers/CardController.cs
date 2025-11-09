@@ -155,10 +155,10 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("drawcardfromdeck/{guid}")]
-        public async Task<Card> DrawCardFromDeck(string guid) // top card
+        public async Task<IActionResult> DrawCardFromDeck(string guid) // top card
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.Deck.Cards.Count < 1) throw new IndexOutOfRangeException("No cards left in deck.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.Deck.Cards.Count < 1) return NotFound("No cards left in deck.");
 
             Card drawnCard = game.Deck.Cards[0];
             game.Hand.Add(drawnCard);
@@ -168,7 +168,7 @@ namespace PokeServer.Controllers
             game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_DRAWN_FROM_DECK, drawnCard));
             _logger.LogInformation($"1 card drawn, hand has {game.Hand.Count} cards.");
             _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
-            return drawnCard;
+            return Ok(drawnCard);
         }
 
         [HttpPut]
@@ -211,10 +211,10 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("drawcardfromprizes/{guid}")]
-        public async Task<PrizeCardWrapper> DrawCardFromPrizes(string guid)
+        public async Task<IActionResult> DrawCardFromPrizes(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.PrizeCards.Count < 1) throw new IndexOutOfRangeException("No prize cards left.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.PrizeCards.Count < 1) return NotFound("No prize cards left.");
             Card drawnCard = game.PrizeCards[0];
             game.Hand.Add(drawnCard);
             game.PrizeCards.RemoveAt(0);
@@ -227,7 +227,7 @@ namespace PokeServer.Controllers
                 PrizeCard = drawnCard,
                 RemainingPrizes = game.PrizeCards.Count
             };
-            return prizeCardWrapper;
+            return Ok(prizeCardWrapper);
         }
 
         #endregion draw methods
