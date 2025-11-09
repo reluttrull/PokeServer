@@ -15,7 +15,7 @@ namespace PokeServer.Model
         public GameRecord GameRecord { get; set; } = new GameRecord();
         public Game(int deckId)
         {
-            using (StreamReader r = new StreamReader("TestData/TestDecks.json"))
+            using (StreamReader r = new StreamReader("DeckData/TestDecks.json"))
             {
                 string json = r.ReadToEnd();
                 List<Deck> decks = JsonSerializer.Deserialize<List<Deck>>(json);
@@ -29,6 +29,10 @@ namespace PokeServer.Model
                     throw new ArgumentException($"Deck with ID {deckId} not found.");
                 }
             }
+        }
+        public Game(Deck importedDeck)
+        {
+            Deck = importedDeck;
         }
 
         internal void SetStartingPosition(List<Card> hand)

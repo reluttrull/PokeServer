@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders.Physical;
 using PokeServer.Model;
+using System;
 
 namespace PokeServer.Controllers
 {
@@ -40,6 +41,43 @@ namespace PokeServer.Controllers
                 _logger.LogInformation("Populated {CardCount} cards for deck {DeckId}", game.Deck.Cards.Count, DeckId);
             }
 
+            _logger.LogInformation("Shuffling deck and drawing hand for game {GameGuid}...", game.Guid);
+            // create GameStart object (draw starting hand)
+            GameStart gameStart = new GameStart(game.Guid.ToString(), game.Deck.Cards);
+
+            if (gameStart.Hand.Count == 0)
+            {
+                _logger.LogError("Failed to draw a valid starting hand for game {GameGuid}", game.Guid);
+                return BadRequest("Failed to draw a valid starting hand.");
+            }
+
+            // populate game object with starting hand and draw prize cards
+            game.SetStartingPosition(gameStart.Hand);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.GAME_STARTED, new List<Card>(gameStart.Hand)));
+            foreach (List<Card> mulliganHand in gameStart.MulliganHands)
+            {
+                game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.DRAW_MULLIGAN, mulliganHand));
+            }
+            _logger.LogInformation($"Starting hand set with {game.Hand.Count} cards.");
+            _logger.LogInformation($"Starting prize cards set with {game.PrizeCards.Count} cards.");
+            _logger.LogInformation($"Deck has {game.Deck.Cards.Count} cards remaining.");
+
+            // save game to memory cache
+            if (!_memoryCache.TryGetValue(game.Guid.ToString(), out Game? value))
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(memoryCacheTimeoutHours));
+                _memoryCache.Set<Game>(game.Guid.ToString(), game, cacheEntryOptions);
+            }
+            return Ok(gameStart);
+        }
+
+        [HttpGet]
+        [Route("getnewgamefromimporteddeck/{deckGuid}")]
+        public async Task<IActionResult> GetNewGameFromImportedDeck(string deckGuid)
+        {
+            if (!_memoryCache.TryGetValue(deckGuid, out Deck? deckValue)) return NotFound("Deck not found.");
+            Game game = new Game(deckValue);
             _logger.LogInformation("Shuffling deck and drawing hand for game {GameGuid}...", game.Guid);
             // create GameStart object (draw starting hand)
             GameStart gameStart = new GameStart(game.Guid.ToString(), game.Deck.Cards);
