@@ -26,7 +26,7 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("getnewgame/{deckId}")]
-        public async Task<GameStart> GetNewGame(int DeckId)
+        public async Task<IActionResult> GetNewGame(int DeckId)
         {
             // create Game object
             Game game = new Game(DeckId);
@@ -47,7 +47,7 @@ namespace PokeServer.Controllers
             if (gameStart.Hand.Count == 0)
             {
                 _logger.LogError("Failed to draw a valid starting hand for game {GameGuid}", game.Guid);
-                throw new Exception("Failed to draw a valid starting hand.");
+                return BadRequest("Failed to draw a valid starting hand.");
             }
 
             // populate game object with starting hand and draw prize cards
@@ -68,7 +68,7 @@ namespace PokeServer.Controllers
                     .SetSlidingExpiration(TimeSpan.FromHours(memoryCacheTimeoutHours));
                 _memoryCache.Set<Game>(game.Guid.ToString(), game, cacheEntryOptions);
             }
-            return gameStart;
+            return Ok(gameStart);
         }
 
         [HttpGet]
@@ -98,47 +98,47 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("gethand/{guid}")]
-        public async Task<List<Card>> GetHand(string guid)
+        public async Task<IActionResult> GetHand(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            return game.Hand;
+            return Ok(game.Hand);
         }
 
         [HttpGet]
         [Route("gettemphand/{guid}")]
-        public async Task<List<Card>> GetTempHand(string guid)
+        public async Task<IActionResult> GetTempHand(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            return game.TempHand;
+            return Ok(game.TempHand);
         }
 
         [HttpGet]
         [Route("getactive/{guid}")]
-        public async Task<PlaySpot> GetActive(string guid)
+        public async Task<IActionResult> GetActive(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            return game.Active;
+            return Ok(game.Active);
         }
 
         [HttpGet]
         [Route("getbench/{guid}")]
-        public async Task<List<PlaySpot>> GetBench(string guid)
+        public async Task<IActionResult> GetBench(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            return game.Bench;
+            return Ok(game.Bench);
         }
 
         [HttpGet]
         [Route("getdiscard/{guid}")]
-        public async Task<List<Card>> GetDiscard(string guid)
+        public async Task<IActionResult> GetDiscard(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            return game.DiscardPile;
+            return Ok(game.DiscardPile);
         }
 
         #endregion collection getters
@@ -146,25 +146,25 @@ namespace PokeServer.Controllers
         #region peek methods
         [HttpGet]
         [Route("peekatcardindeckatposition/{guid}/{pos}")]
-        public async Task<Card> PeekAtCardInDeckAtPosition(string guid, int pos)
+        public async Task<IActionResult> PeekAtCardInDeckAtPosition(string guid, int pos)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            if (game.Deck.Cards.Count < pos + 1) throw new IndexOutOfRangeException($"Fewer than {pos + 1} cards in deck!");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (game.Deck.Cards.Count < pos + 1) return NotFound($"Fewer than {pos + 1} cards in deck!");
 
             Card peek = game.Deck.Cards[pos];
             _logger.LogInformation("User peeking at card {peek} at position {pos}.", peek.NumberInDeck, pos);
-            return peek;
+            return Ok(peek);
         }
 
         [HttpGet]
         [Route("peekatallcardsindeck/{guid}")]
-        public async Task<List<Card>> PeekAtAllCardsInDeck(string guid)
+        public async Task<IActionResult> PeekAtAllCardsInDeck(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
             game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.PEEKED_AT_DECK));
             _logger.LogInformation("User peeking at {num} cards in deck.", game.Deck.Cards.Count);
-            return game.Deck.Cards;
+            return Ok(game.Deck.Cards);
         }
         #endregion peek methods
 
@@ -202,25 +202,25 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("flipcoin/{guid}")]
-        public async Task<bool> FlipCoin(string guid)
+        public async Task<IActionResult> FlipCoin(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
             Random rand = new Random();
             bool isHeads = GetFlip(rand);
             game.GameRecord.Logs.Add(new GameLog(isHeads ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             _logger.LogInformation("Coin flipped: {Result}", isHeads ? "Heads" : "Tails");
-            return isHeads;
+            return Ok(isHeads);
         }
 
         [HttpGet]
         [Route("flipxcoins/{guid}/{x}")]
-        public async Task<List<bool>> FlipXCoins(string guid, int x)
+        public async Task<IActionResult> FlipXCoins(string guid, int x)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
-            if (x < 1) throw new ArgumentOutOfRangeException("Number of coins to flip must be at least 1.");
-            if (x > 20) throw new ArgumentOutOfRangeException("Number of coins to flip must not exceed 20.");
+            if (x < 1) return BadRequest("Number of coins to flip must be at least 1.");
+            if (x > 20) return BadRequest("Number of coins to flip must not exceed 20.");
             Random rand = new Random();
             List<bool> Coins = new List<bool>();
             for (int i = 0; i < x; i++)
@@ -230,14 +230,14 @@ namespace PokeServer.Controllers
                 game.GameRecord.Logs.Add(new GameLog(isHeads ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             }
             _logger.LogInformation("{HeadsCount} heads flipped out of {TotalFlips} flips.", Coins.Count(c => c), x);
-            return Coins;
+            return Ok(Coins);
         }
 
         [HttpGet]
         [Route("flipcoinsuntil/{guid}/{isHeads}")]
-        public async Task<int> FlipCoinsUntil(string guid, bool isHeads)
+        public async Task<IActionResult> FlipCoinsUntil(string guid, bool isHeads)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
 
             // if first flip matches, returns 0
             Random rand = new Random();
@@ -250,7 +250,7 @@ namespace PokeServer.Controllers
                 game.GameRecord.Logs.Add(new GameLog(result ? Enums.GameEvent.COIN_FLIPPED_HEADS : Enums.GameEvent.COIN_FLIPPED_TAILS));
             }
             _logger.LogInformation("Flipped {FlipCount} times until {DesiredResult}.", flips, isHeads ? "Heads" : "Tails");
-            return flips;
+            return Ok(flips);
         }
 
         #endregion coin flip methods
@@ -265,10 +265,10 @@ namespace PokeServer.Controllers
 
         [HttpGet]
         [Route("getgamehistory/{guid}")]
-        public async Task<GameRecord> GetGameHistory(string guid)
+        public async Task<IActionResult> GetGameHistory(string guid)
         {
-            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) throw new KeyNotFoundException("Game not found.");
-            return game.GameRecord;
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            return Ok(game.GameRecord);
         }
         #endregion other methods
     }
