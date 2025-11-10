@@ -68,6 +68,7 @@ namespace PokeServer
                         break;
                 }
             }
+            redis.Close();
             return cards;
         }
 
