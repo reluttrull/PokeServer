@@ -24,7 +24,14 @@ namespace PokeServer
                 else // if we do need to call api
                 {
                     HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{cardIds[i]}");
-                    if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve card data from TCGDex API");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var splitId = cardIds[i].Split('-');
+                        string paddedId = splitId[1].PadLeft(3, '0');
+                        string fullPaddedId = $"{splitId[0]}-{paddedId}";
+                        response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{fullPaddedId}");
+                        if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve card data from TCGDex API");
+                    }
                     cardJson = await response.Content.ReadAsStringAsync();
                     db.StringSet(cardIds[i], cardJson);
                 }

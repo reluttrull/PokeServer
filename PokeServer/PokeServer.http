@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=ce7a1f31-d3ac-49bc-b656-44f0b615bb87
+@Guid=4bdce980-abaa-4c9b-a5b4-3ca1be5fb85d
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -217,12 +217,17 @@ GET {{PokeServer_HostAddress}}/game/flipxcoins/{{guid}}/{{x}}
 PUT {{PokeServer_HostAddress}}/deck/importdeck
 Content-Type: application/json
 
-"Pokémon: 16\n4 Pidgeotto BS 22\n4 Pidgey BS 57\n4 Gastly BS 50\n4 Haunter BS 29\n\nTrainer: 32\n4 Clefairy Doll BS 70\n4 Pokédex BS 87\n3 Professor Oak BS 88\n1 Computer Search BS 71\n4 Bill BS 91\n2 Scoop Up BS 78\n3 Gust of Wind BS 93\n3 Potion BS 94\n2 PlusPower BS 84\n2 Item Finder BS 74\n2 Pokémon Trader BS 77\n2 Super Potion BS 90\n\nEnergy: 12\n9 Psychic Energy BS 101\n3 Double Colorless Energy BS 96"
+"Pokémon: 16\n2 Bibarel BRS 121\n2 Maushold PAF 74\n1 Fan Rotom SCR 118\n2 Tandemaus PAL 166\n2 Maushold SSP 158\n2 Tandemaus PAR 153\n2 Bidoof CRZ 111\n3 Maushold ex PAR 155\n\nTrainer: 30\n2 Ultra Ball SVI 196\n2 Earthen Vessel PAR 163\n2 Feather Ball ASR 141\n4 Buddy-Buddy Poffin TEF 144\n3 Iono PAL 185\n1 Artazon PAF 76\n3 Night Stretcher SFA 61\n2 Super Rod PAL 188\n1 Hero's Cape TEF 152\n1 Town Store OBF 196\n3 Vengeful Punch OBF 197\n2 Cheren's Care BRS 134\n2 Boss's Orders PAL 172\n2 Arven SVI 166\n\nEnergy: 14\n2 Mist Energy TEF 161\n4 Double Turbo Energy BRS 151\n8 Psychic Energy BS 101"
 
 ###
 
 
-@deckGuid=97221b57-89cb-4b16-a94f-f11aba3d301a
+@deckGuid=0f2e142f-f730-470b-9e60-f7662f0b9875
 GET {{PokeServer_HostAddress}}/game/getnewgamefromimporteddeck/{{deckGuid}}
+
+###
+
+
+GET {{PokeServer_HostAddress}}/game/drawcardfromdeck/{{guid}}
 
 ###
