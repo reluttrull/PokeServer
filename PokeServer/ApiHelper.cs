@@ -1,6 +1,10 @@
-﻿using PokeServer.Model;
-using System.Text.Json.Nodes;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using PokeServer.Extensions;
+using PokeServer.Model;
 using StackExchange.Redis;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PokeServer
 {
@@ -23,16 +27,7 @@ namespace PokeServer
                 }
                 else // if we do need to call api
                 {
-                    HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{cardIds[i]}");
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var splitId = cardIds[i].Split('-');
-                        string paddedId = splitId[1].PadLeft(3, '0');
-                        string fullPaddedId = $"{splitId[0]}-{paddedId}";
-                        response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{fullPaddedId}");
-                        if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve card data from TCGDex API");
-                    }
-                    cardJson = await response.Content.ReadAsStringAsync();
+                    cardJson = await TryGetCardFromAPI(cardIds[i]);
                     db.StringSet(cardIds[i], cardJson);
                 }
                 // deserialize whatever we got
@@ -49,6 +44,19 @@ namespace PokeServer
                         PokemonCard pCard = System.Text.Json.JsonSerializer.Deserialize<PokemonCard>(cardJson, options);
                         if (pCard != null)
                         {
+                            // try populate missing data
+                            if (pCard.EvolveFrom == string.Empty && pCard.Stage != "Basic")
+                            {
+                                pCard = await TryPopulateMissingEvolutionData(pCard, options);
+                                if (pCard.EvolveFrom != string.Empty)
+                                {
+                                    var serializeOptions = new JsonSerializerOptions
+                                    {
+                                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                    };
+                                    db.StringSet(cardIds[i], System.Text.Json.JsonSerializer.Serialize(pCard, serializeOptions));
+                                }
+                            }
                             cards.Add(pCard);
                         }
                         break;
@@ -77,6 +85,44 @@ namespace PokeServer
             }
             redis.Close();
             return cards;
+        }
+        private static async Task<string> TryGetCardFromAPI(string cardId)
+        {
+            HttpResponseMessage response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{cardId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var splitId = cardId.Split('-');
+                string paddedId = splitId[1].PadLeft(3, '0');
+                string fullPaddedId = $"{splitId[0]}-{paddedId}";
+                response = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/{fullPaddedId}");
+                if (!response.IsSuccessStatusCode) throw new HttpRequestException("failed to retrieve card data from TCGDex API");
+            }
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static async Task<PokemonCard> TryPopulateMissingEvolutionData(PokemonCard pCard, System.Text.Json.JsonSerializerOptions options)
+        {
+            string simpleName = pCard.Name
+                .TrimEnding(" ex")
+                .TrimEnding(" vstar")
+                .TrimEnding(" v")
+                .TrimEnding(" gx");
+            var searchResponse = await new HttpClient().GetAsync($"https://api.tcgdex.net/v2/en/cards/?name={simpleName}&evolveFrom=notnull:");
+            PokemonCard oldestRelatedCard = new();
+            if (searchResponse != null && searchResponse.IsSuccessStatusCode)
+            {
+                string relatedCardsJson = await searchResponse.Content.ReadAsStringAsync();
+                List<PokemonCard> relatedCards = JsonConvert.DeserializeObject<List<PokemonCard>>(relatedCardsJson);
+                oldestRelatedCard = relatedCards.First();
+            }
+            if (oldestRelatedCard.Id != string.Empty)
+            {
+                string relatedCardFullJson = await TryGetCardFromAPI(oldestRelatedCard.Id);
+                // deserialize whatever we got
+                PokemonCard fullRelatedCard = System.Text.Json.JsonSerializer.Deserialize<PokemonCard>(relatedCardFullJson, options);
+                pCard.EvolveFrom = fullRelatedCard.EvolveFrom;
+            }
+            return pCard;
         }
 
         public static async Task<List<string>> GetValidEvolutionNames(string pokemonName)
