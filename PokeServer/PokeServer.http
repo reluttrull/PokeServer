@@ -6,7 +6,7 @@ GET {{PokeServer_HostAddress}}/game/getnewgame/{{DeckId}}
 
 
 ###
-@Guid=95cb038d-73d2-4580-8b5f-e9fdb937755e
+@Guid=c99422ce-b2e9-4527-a68f-fd5c01b593ad
 GET {{PokeServer_HostAddress}}/game/checkgameactive/{{guid}}
 
 ###
@@ -35,60 +35,79 @@ GET {{PokeServer_HostAddress}}/game/gettemphand/{{guid}}
 
 ###
 
-PUT {{PokeServer_HostAddress}}/game/movetoactive/{{guid}}
+PUT {{PokeServer_HostAddress}}/game/movetostadium/{{guid}}
 Content-Type: application/json
 
 {
-    "$type": "EnergyCard",
-    "effect": "",
-    "energyType": "Normal",
-    "energyColor": "",
-    "numberInDeck": "5f9fe015-5cf0-4f42-b5c7-6831a2d39a7a",
-    "category": "Energy",
-    "id": "base1-100",
-    "image": "https://assets.tcgdex.net/en/base/base1/100",
-    "name": "Lightning Energy",
-    "description": ""
-  }
+  "hp": 50,
+  "types": [
+    "Colorless"
+  ],
+  "evolveFrom": "",
+  "stage": "Basic",
+  "abilities": [],
+  "attacks": [
+    {
+      "cost": [
+        "Colorless"
+      ],
+      "name": "Fury Attack",
+      "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
+      "damage": "10x"
+    }
+  ],
+  "weaknesses": [
+    {
+      "type": "Lightning",
+      "value": "×2"
+    }
+  ],
+  "retreatCost": 0,
+  "numberInDeck": "89c2d4dc-d9bb-4326-a506-35e798fa8956",
+  "category": "Pokemon",
+  "id": "base1-48",
+  "image": "https://assets.tcgdex.net/en/base/base1/48",
+  "name": "Doduo",
+  "description": ""
+}
 
 ###
 
-PUT {{PokeServer_HostAddress}}/game/movetobench/{{guid}}
+PUT {{PokeServer_HostAddress}}/game/sendtotemphand/{{guid}}
 Content-Type: application/json
 
 {
-    "$type": "PokemonCard",
-    "hp": 50,
-    "types": [
-      "Colorless"
-    ],
-    "evolveFrom": "",
-    "stage": "Basic",
-    "abilities": [],
-    "attacks": [
-      {
-        "cost": [
-          "Colorless"
-        ],
-        "name": "Fury Attack",
-        "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
-        "damage": "10x"
-      }
-    ],
-    "weaknesses": [
-      {
-        "type": "Lightning",
-        "value": "×2"
-      }
-    ],
-    "retreatCost": 0,
-    "numberInDeck": "6e50c837-602e-4376-bff7-87655e2c79b5",
-    "category": "Pokemon",
-    "id": "base1-48",
-    "image": "https://assets.tcgdex.net/en/base/base1/48",
-    "name": "Doduo",
-    "description": ""
-  }
+  "hp": 50,
+  "types": [
+    "Colorless"
+  ],
+  "evolveFrom": "",
+  "stage": "Basic",
+  "abilities": [],
+  "attacks": [
+    {
+      "cost": [
+        "Colorless"
+      ],
+      "name": "Fury Attack",
+      "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
+      "damage": "10x"
+    }
+  ],
+  "weaknesses": [
+    {
+      "type": "Lightning",
+      "value": "×2"
+    }
+  ],
+  "retreatCost": 0,
+  "numberInDeck": "89c2d4dc-d9bb-4326-a506-35e798fa8956",
+  "category": "Pokemon",
+  "id": "base1-48",
+  "image": "https://assets.tcgdex.net/en/base/base1/48",
+  "name": "Doduo",
+  "description": ""
+}
 
 ###
 
@@ -96,47 +115,37 @@ PUT {{PokeServer_HostAddress}}/game/discardcard/{{guid}}
 Content-Type: application/json
 
 {
-    "$type": "PokemonCard",
-    "hp": 90,
-    "types": [
-      "Lightning"
-    ],
-    "evolveFrom": "",
-    "stage": "Basic",
-    "abilities": [],
-    "attacks": [
-      {
-        "cost": [
-          "Lightning",
-          "Lightning",
-          "Lightning",
-          "Colorless"
-        ],
-        "name": "Thunder",
-        "effect": "Flip a coin. If tails, Zapdos does 30 damage to itself.",
-        "damage": "60"
-      },
-      {
-        "cost": [
-          "Lightning",
-          "Lightning",
-          "Lightning",
-          "Lightning"
-        ],
-        "name": "Thunderbolt",
-        "effect": "Discard all Energy cards attached to Zapdos in order to use this attack.",
-        "damage": "100"
-      }
-    ],
-    "weaknesses": [],
-    "retreatCost": 0,
-    "numberInDeck": "91f06993-b2ba-4be2-abaa-99fbc081dcdc",
-    "category": "Pokemon",
-    "id": "base1-16",
-    "image": "https://assets.tcgdex.net/en/base/base1/16",
-    "name": "Zapdos",
-    "description": ""
-  }
+  "hp": 50,
+  "types": [
+    "Colorless"
+  ],
+  "evolveFrom": "",
+  "stage": "Basic",
+  "abilities": [],
+  "attacks": [
+    {
+      "cost": [
+        "Colorless"
+      ],
+      "name": "Fury Attack",
+      "effect": "Flip 2 coins. This attack does 10 damage times the number of heads.",
+      "damage": "10x"
+    }
+  ],
+  "weaknesses": [
+    {
+      "type": "Lightning",
+      "value": "×2"
+    }
+  ],
+  "retreatCost": 0,
+  "numberInDeck": "89c2d4dc-d9bb-4326-a506-35e798fa8956",
+  "category": "Pokemon",
+  "id": "base1-48",
+  "image": "https://assets.tcgdex.net/en/base/base1/48",
+  "name": "Doduo",
+  "description": ""
+}
 
 ###
 

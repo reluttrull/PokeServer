@@ -127,6 +127,26 @@ namespace PokeServer.Controllers
         }
 
         [HttpPut]
+        [Route("movetostadium/{guid}")]
+        public async Task<IActionResult> MoveToStadium(string guid, Card card)
+        {
+            if (!_memoryCache.TryGetValue(guid, out Game? game) || game == null) return NotFound("Game not found.");
+            if (card is null) return NotFound("No card to move.");
+
+            bool success = await RemoveCardFromCurrentLocation(game, card);
+            if (!success) return NotFound("Card not in play.");
+
+            game.Stadium = card;
+
+            await _hubContext.Clients.Group(guid).SendAsync("StadiumChanged", game.Stadium);
+            game.GameRecord.Logs.Add(new GameLog(Enums.GameEvent.CARD_MOVED_TO_STADIUM, card));
+            _logger.LogInformation("Card {card.Name} played as stadium for game {guid}.", card.Name, guid);
+
+            return NoContent();
+        }
+
+
+        [HttpPut]
         [Route("attachcard/{guid}/{attachedToCardId}")]
         public async Task<IActionResult> AttachCard(string guid, string attachedToCardId, Card card)
         {
@@ -380,6 +400,11 @@ namespace PokeServer.Controllers
             {
                 game.Active.AttachedCards.RemoveAll(c => c.NumberInDeck == card.NumberInDeck);
                 await _hubContext.Clients.Group(guid).SendAsync("ActiveChanged", game.Active);
+            }
+            else if (game.Stadium?.NumberInDeck == card.NumberInDeck)
+            {
+                game.Stadium = null;
+                await _hubContext.Clients.Group(guid).SendAsync("StadiumChanged", game.Stadium);
             }
             else return false;
             return true;

@@ -12,6 +12,7 @@ namespace PokeServer.Model
         public PlaySpot Active { get; set; } = new PlaySpot();
         public List<PlaySpot> Bench { get; set; } = new List<PlaySpot>();
         public List<Card> DiscardPile { get; set; } = new List<Card>();
+        public Card? Stadium { get; set; }
         public GameRecord GameRecord { get; set; } = new GameRecord();
         public Game(int deckId)
         {
