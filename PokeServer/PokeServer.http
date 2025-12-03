@@ -226,12 +226,12 @@ GET {{PokeServer_HostAddress}}/game/flipxcoins/{{guid}}/{{x}}
 PUT {{PokeServer_HostAddress}}/deck/importdeck
 Content-Type: application/json
 
-"Pokémon: 16\n2 Bibarel BRS 121\n2 Maushold PAF 74\n1 Fan Rotom SCR 118\n2 Tandemaus PAL 166\n2 Maushold SSP 158\n2 Tandemaus PAR 153\n2 Bidoof CRZ 111\n3 Maushold ex PAR 155\n\nTrainer: 30\n2 Ultra Ball SVI 196\n2 Earthen Vessel PAR 163\n2 Feather Ball ASR 141\n4 Buddy-Buddy Poffin TEF 144\n3 Iono PAL 185\n1 Artazon PAF 76\n3 Night Stretcher SFA 61\n2 Super Rod PAL 188\n1 Hero's Cape TEF 152\n1 Town Store OBF 196\n3 Vengeful Punch OBF 197\n2 Cheren's Care BRS 134\n2 Boss's Orders PAL 172\n2 Arven SVI 166\n\nEnergy: 14\n2 Mist Energy TEF 161\n4 Double Turbo Energy BRS 151\n8 Water Energy Energy 20"
+"Pokémon: 23\n2 Rowlet SFA 3\n4 Wattrel PAL 80\n2 Tatsugiri TWM 131\n4 Murkrow PAL 131\n2 Iron Bundle PAR 56\n1 Squawkabilly ex PAF 75\n4 Flamigo PAL 170\n4 Dartrix SFA 4\nTrainer: 29\n4 Ultra Ball MEG 131\n1 Earthen Vessel PRE 106\n1 Brilliant Blender SSP 164\n1 Buddy-Buddy Poffin PRE 101\n1 Counter Catcher PAR 160\n1 Iono PAF 80\n1 Gravity Mountain SSP 177\n1 Dusk Ball SSP 175\n1 Great Ball PAL 183\n1 Brave Bangle WHT 80\n2 Night Stretcher SFA 61\n1 Super Rod PAL 188\n2 Air Balloon BLK 79\n1 Pal Pad SVI 182\n2 Nest Ball PAF 84\n4 Professor's Research PAF 87\n2 Carmine PRE 103\n2 Boss's Orders MEG 114\nEnergy: 8\n2 Mist Energy TEF 161\n1 Jet Energy PAL 190\n5 Darkness Energy DP 129"
 
 ###
 
 
-@deckGuid=f8ca4433-3e3b-4dc0-9b18-d95ab628ba46
+@deckGuid=f9356459-647f-42d1-a1ca-c737329d71b4
 GET {{PokeServer_HostAddress}}/game/getnewgamefromimporteddeck/{{deckGuid}}
 
 ###
