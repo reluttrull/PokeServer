@@ -231,7 +231,7 @@ Content-Type: application/json
 ###
 
 
-@deckGuid=283f8471-0ebf-4be9-9eb7-108e07dc5ab8
+@deckGuid=62761204-2f60-49c0-a6d2-a831f5cf88b4
 GET {{PokeServer_HostAddress}}/game/getnewgamefromimporteddeck/{{deckGuid}}
 
 ###

@@ -80,7 +80,8 @@ namespace PokeServer.Controllers
             // gather all card ids
             List<string> cardIds = SplitIntoCardIds(decklist);
             // translate card ids into TCGdex ids
-            cardIds = TranslateCardIds(cardIds);
+            bool success = TranslateCardIds(ref cardIds);
+            if (!success) return BadRequest("Problem parsing one or more cards in custom decklist. Please check decklist format and try again.");
             // gather card data from Redis/TCGdex
             List<Card> populatedCards = await ApiHelper.PopulateCardList(cardIds);
             // perform validation
@@ -129,29 +130,28 @@ namespace PokeServer.Controllers
             return cardIds;
         }
 
-        private List<string> TranslateCardIds(List<string> untranslatedCardIds)
+        private bool TranslateCardIds(ref List<string> cardIds)
         {
-            List<string> translatedCardIds = new();
-            foreach (string cardId in untranslatedCardIds)
+            for (int i = 0; i < cardIds.Count; i++)
             {
-                string[] words = cardId.Split(" ");
+                string[] words = cardIds[i].Split(" ");
                 int.TryParse(words[words.Length - 1], out int id);
                 try
                 {
                     string set = SetTranslation.SetCodes[words[words.Length - 2]];
-                    translatedCardIds.Add($"{set}-{id}");
+                    cardIds[i] = $"{set}-{id}";
                 }
                 catch (KeyNotFoundException ex)
                 {
                     if (words.Contains("Energy")) // Limitless sometimes just lists energy without specific card ref
                     {
                         string energyFullId = EnergyTranslation.EnergyCodes[words[0]];
-                        translatedCardIds.Add(energyFullId);
+                        cardIds[i] = energyFullId;
                     }
-                    else throw;
+                    else return false;
                 }
             }
-            return translatedCardIds;
+            return true;
         }
         #endregion deck import
     }
