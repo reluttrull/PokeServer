@@ -136,14 +136,20 @@ namespace PokeServer.Controllers
             {
                 string[] words = cardId.Split(" ");
                 int.TryParse(words[words.Length - 1], out int id);
-                if (words[words.Length - 2] == "Energy") // Limitless sometimes just lists energy without specific card ref
+                try
                 {
-                    string energyFullId = EnergyTranslation.EnergyCodes[words[0]];
-                    translatedCardIds.Add(energyFullId);
-                    continue;
+                    string set = SetTranslation.SetCodes[words[words.Length - 2]];
+                    translatedCardIds.Add($"{set}-{id}");
                 }
-                string set = SetTranslation.SetCodes[words[words.Length - 2]];
-                translatedCardIds.Add($"{set}-{id}");
+                catch (KeyNotFoundException ex)
+                {
+                    if (words.Contains("Energy")) // Limitless sometimes just lists energy without specific card ref
+                    {
+                        string energyFullId = EnergyTranslation.EnergyCodes[words[0]];
+                        translatedCardIds.Add(energyFullId);
+                    }
+                    else throw;
+                }
             }
             return translatedCardIds;
         }
